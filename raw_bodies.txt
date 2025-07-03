@@ -1,0 +1,5250 @@
+header: 
+  seq: 1
+  stamp: 
+    secs: 1651241762
+    nsecs: 302421000
+  frame_id: "base_footprint"
+poses: []
+---
+header: 
+  seq: 2
+  stamp: 
+    secs: 1651241770
+    nsecs: 802591000
+  frame_id: "base_footprint"
+poses: []
+---
+header: 
+  seq: 3
+  stamp: 
+    secs: 1651241772
+    nsecs: 802596000
+  frame_id: "base_footprint"
+poses: []
+---
+header: 
+  seq: 4
+  stamp: 
+    secs: 1651241773
+    nsecs: 802637000
+  frame_id: "base_footprint"
+poses: []
+---
+header: 
+  seq: 5
+  stamp: 
+    secs: 1651241775
+    nsecs: 102660000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.07416280502
+      y: 0.639483592773
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.988835546768
+      w: 0.149010944054
+---
+header: 
+  seq: 6
+  stamp: 
+    secs: 1651241777
+    nsecs: 402736000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 2.33901378806
+      y: 0.667745397593
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999809504396
+      w: 0.0195180665082
+---
+header: 
+  seq: 7
+  stamp: 
+    secs: 1651241778
+    nsecs: 402756000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 2.93157655559
+      y: 0.656029194914
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.968900220044
+      w: 0.247451739939
+---
+header: 
+  seq: 8
+  stamp: 
+    secs: 1651241779
+    nsecs: 402718000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 3.16627781857
+      y: -0.0570478438765
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.99575337181
+      w: 0.0920609718019
+---
+header: 
+  seq: 9
+  stamp: 
+    secs: 1651241780
+    nsecs: 402750000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 2.88393865388
+      y: -0.156455253963
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.771517406667
+      w: 0.636208213724
+---
+header: 
+  seq: 10
+  stamp: 
+    secs: 1651241781
+    nsecs: 402795000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 3.50411818779
+      y: 0.856218243349
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.907304378071
+      w: 0.42047445289
+---
+header: 
+  seq: 11
+  stamp: 
+    secs: 1651241782
+    nsecs: 402800000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 3.53562408659
+      y: 0.603459064163
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.938079233011
+      w: 0.346420773907
+---
+header: 
+  seq: 12
+  stamp: 
+    secs: 1651241783
+    nsecs: 402881000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 3.57955234386
+      y: 0.267943739495
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999830058942
+      w: 0.0184351088043
+---
+header: 
+  seq: 13
+  stamp: 
+    secs: 1651241784
+    nsecs: 402871000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 3.32345469172
+      y: 0.106692545841
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.987178794857
+      w: 0.159618379219
+---
+header: 
+  seq: 14
+  stamp: 
+    secs: 1651241785
+    nsecs: 402848000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 3.01131106948
+      y: -0.0828329305811
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.992121643234
+      w: 0.125278270367
+---
+header: 
+  seq: 15
+  stamp: 
+    secs: 1651241786
+    nsecs: 202908000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 2.53927891154
+      y: -0.179899281448
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999934900826
+      w: 0.0114102633553
+---
+header: 
+  seq: 16
+  stamp: 
+    secs: 1651241788
+    nsecs: 202913000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 2.71466202296
+      y: -0.344761691355
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999565010659
+      w: 0.0294921933002
+---
+header: 
+  seq: 17
+  stamp: 
+    secs: 1651241789
+    nsecs: 302932000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 2.6419338212
+      y: -0.400716812435
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999950470486
+      w: 0.00995271692801
+---
+header: 
+  seq: 18
+  stamp: 
+    secs: 1651241790
+    nsecs: 302923000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 2.26941686222
+      y: -0.899286609399
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999019976564
+      w: 0.0442615682838
+---
+header: 
+  seq: 19
+  stamp: 
+    secs: 1651241791
+    nsecs: 302954000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 2.01414314034
+      y: -0.43190421738
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999262999372
+      w: 0.0383856494814
+---
+header: 
+  seq: 20
+  stamp: 
+    secs: 1651241792
+    nsecs: 302958000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 2.12360366476
+      y: -0.118737294385
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999993127459
+      w: 0.00370742962351
+---
+header: 
+  seq: 21
+  stamp: 
+    secs: 1651241793
+    nsecs:   3026000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.98881410425
+      y: 0.356372200473
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.992417571957
+      w: 0.122912012721
+---
+header: 
+  seq: 22
+  stamp: 
+    secs: 1651241795
+    nsecs: 103010000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.94231799291
+      y: 0.711224119596
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.918532929107
+      w: 0.395344480354
+---
+header: 
+  seq: 23
+  stamp: 
+    secs: 1651241796
+    nsecs: 703049000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.69411750303
+      y: 1.28379017043
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.952034413445
+      w: 0.305990973095
+---
+header: 
+  seq: 24
+  stamp: 
+    secs: 1651241797
+    nsecs: 703092000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 2.03321471946
+      y: 0.933446730517
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.976692506317
+      w: 0.214643304355
+---
+header: 
+  seq: 25
+  stamp: 
+    secs: 1651241798
+    nsecs: 703089000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.95598340912
+      y: 0.177530119042
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.958146499649
+      w: 0.286278335209
+---
+header: 
+  seq: 26
+  stamp: 
+    secs: 1651241799
+    nsecs: 703103000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 2.229844769
+      y: 0.277794975672
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999939911196
+      w: 0.0109623901111
+---
+header: 
+  seq: 27
+  stamp: 
+    secs: 1651241800
+    nsecs: 503140000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 2.28645571543
+      y: 0.344030443967
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.995724634244
+      w: 0.0923712767041
+---
+header: 
+  seq: 28
+  stamp: 
+    secs: 1651241803
+    nsecs: 303162000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 2.20892382458
+      y: 0.227521461379
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.998919587634
+      w: 0.0464721146701
+---
+header: 
+  seq: 29
+  stamp: 
+    secs: 1651241805
+    nsecs: 903245000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 2.18425750912
+      y: 0.186768059353
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.998412796397
+      w: 0.056319516968
+---
+header: 
+  seq: 30
+  stamp: 
+    secs: 1651241806
+    nsecs: 903248000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 2.12519480087
+      y: 0.241639544565
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.997439565641
+      w: 0.0715144243712
+---
+header: 
+  seq: 31
+  stamp: 
+    secs: 1651241807
+    nsecs: 903256000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.35090603255
+      y: 0.628554521536
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.998520628922
+      w: 0.0543741999168
+---
+header: 
+  seq: 32
+  stamp: 
+    secs: 1651241808
+    nsecs: 903303000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 2.06671266441
+      y: 0.191829886714
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999931882446
+      w: 0.0116717808799
+---
+header: 
+  seq: 33
+  stamp: 
+    secs: 1651241809
+    nsecs: 903290000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.41719983921
+      y: -0.0631874084592
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.997800316899
+      w: 0.0662912331718
+---
+header: 
+  seq: 34
+  stamp: 
+    secs: 1651241810
+    nsecs: 903366000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.79477583578
+      y: 0.198359787234
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999751360364
+      w: 0.0222983732834
+---
+header: 
+  seq: 35
+  stamp: 
+    secs: 1651241812
+    nsecs:   3368000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.51289606614
+      y: 0.190111781138
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.985246593657
+      w: 0.171140730651
+---
+header: 
+  seq: 36
+  stamp: 
+    secs: 1651241813
+    nsecs:   3360000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 2.17032757996
+      y: 1.14261293811
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999308583034
+      w: 0.0371800467367
+---
+header: 
+  seq: 37
+  stamp: 
+    secs: 1651241814
+    nsecs:   3378000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 2.76514608206
+      y: 1.69871284502
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.987157586912
+      w: 0.159749487019
+---
+header: 
+  seq: 38
+  stamp: 
+    secs: 1651241815
+    nsecs:   3401000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.59046546891
+      y: -0.0248561862163
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.990911303708
+      w: 0.134516869514
+---
+header: 
+  seq: 39
+  stamp: 
+    secs: 1651241816
+    nsecs:   3426000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.65237214702
+      y: 0.0761450351172
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.994602588797
+      w: 0.103757844803
+---
+header: 
+  seq: 40
+  stamp: 
+    secs: 1651241817
+    nsecs:   3468000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.62883781505
+      y: 0.0658332091338
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.99459238115
+      w: 0.103855646729
+---
+header: 
+  seq: 41
+  stamp: 
+    secs: 1651241818
+    nsecs:   3455000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.44763989895
+      y: -0.0252890395648
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.987258079934
+      w: 0.15912725601
+---
+header: 
+  seq: 42
+  stamp: 
+    secs: 1651241819
+    nsecs:   3486000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.59942712454
+      y: 0.113938622882
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999632188848
+      w: 0.0271198639233
+---
+header: 
+  seq: 43
+  stamp: 
+    secs: 1651241820
+    nsecs:   3494000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.56301585797
+      y: 0.0836281144008
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.993623921002
+      w: 0.112745304171
+---
+header: 
+  seq: 44
+  stamp: 
+    secs: 1651241821
+    nsecs:   3542000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.61061638393
+      y: 0.0824617978861
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.981317181688
+      w: 0.19239695664
+---
+header: 
+  seq: 45
+  stamp: 
+    secs: 1651241822
+    nsecs:   3532000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.62247053969
+      y: 0.0743373979983
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.992121878114
+      w: 0.125276410263
+---
+header: 
+  seq: 46
+  stamp: 
+    secs: 1651241823
+    nsecs:   3551000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.62916738911
+      y: 0.0877872652849
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.996373528879
+      w: 0.0850869611049
+---
+header: 
+  seq: 47
+  stamp: 
+    secs: 1651241824
+    nsecs:   3602000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.61606010096
+      y: 0.0684716495517
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.997366441442
+      w: 0.0725271086276
+---
+header: 
+  seq: 48
+  stamp: 
+    secs: 1651241825
+    nsecs:   4114000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.60671392987
+      y: 0.0581847919196
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.996882888705
+      w: 0.0788955398374
+---
+header: 
+  seq: 49
+  stamp: 
+    secs: 1651241826
+    nsecs: 103629000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.62981203727
+      y: 0.0577117802408
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.997991396331
+      w: 0.0633496081293
+---
+header: 
+  seq: 50
+  stamp: 
+    secs: 1651241827
+    nsecs: 103669000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.61484684818
+      y: 0.0437014449604
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.997750770816
+      w: 0.0670328228231
+---
+header: 
+  seq: 51
+  stamp: 
+    secs: 1651241828
+    nsecs: 103685000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.59478889979
+      y: 0.0613188910215
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.998321695738
+      w: 0.0579119315839
+---
+header: 
+  seq: 52
+  stamp: 
+    secs: 1651241829
+    nsecs: 103682000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.5850096929
+      y: 0.050692570586
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999609303167
+      w: 0.0279506891287
+---
+header: 
+  seq: 53
+  stamp: 
+    secs: 1651241830
+    nsecs: 103696000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.60832142744
+      y: 0.0382449414965
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999235797808
+      w: 0.0390873429505
+---
+header: 
+  seq: 54
+  stamp: 
+    secs: 1651241831
+    nsecs: 203766000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.61039484049
+      y: 0.0455750192851
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999380371122
+      w: 0.0351976393545
+---
+header: 
+  seq: 55
+  stamp: 
+    secs: 1651241832
+    nsecs: 203748000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.66080206276
+      y: 0.0798535563027
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.998511501028
+      w: 0.0545415650111
+---
+header: 
+  seq: 56
+  stamp: 
+    secs: 1651241833
+    nsecs: 303773000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.652042153
+      y: 0.0944515754998
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999897914734
+      w: 0.014288460765
+---
+header: 
+  seq: 57
+  stamp: 
+    secs: 1651241834
+    nsecs: 303769000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.79712057105
+      y: 0.109808733989
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999817016083
+      w: 0.0191294106165
+---
+header: 
+  seq: 58
+  stamp: 
+    secs: 1651241835
+    nsecs: 303793000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.85762561066
+      y: 0.0958714928038
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.998502645156
+      w: 0.0547034515892
+---
+header: 
+  seq: 59
+  stamp: 
+    secs: 1651241836
+    nsecs: 303805000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.82560933884
+      y: 0.076304505479
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999359677687
+      w: 0.0357803663152
+---
+header: 
+  seq: 60
+  stamp: 
+    secs: 1651241837
+    nsecs: 303857000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.89359768708
+      y: 0.0727268811178
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.998104971445
+      w: 0.0615342666811
+---
+header: 
+  seq: 61
+  stamp: 
+    secs: 1651241838
+    nsecs: 503848000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.84214428082
+      y: 0.058479438348
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.998266154935
+      w: 0.0588615656597
+---
+header: 
+  seq: 62
+  stamp: 
+    secs: 1651241839
+    nsecs: 503860000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.95186795633
+      y: -0.0950857677767
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.99430410428
+      w: 0.10658024307
+---
+header: 
+  seq: 63
+  stamp: 
+    secs: 1651241840
+    nsecs: 503951000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.93495822637
+      y: -0.207694007507
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.979708558775
+      w: 0.200427392994
+---
+header: 
+  seq: 64
+  stamp: 
+    secs: 1651241841
+    nsecs: 603901000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.76074577791
+      y: -0.137644238122
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999774296911
+      w: 0.0212451226484
+---
+header: 
+  seq: 65
+  stamp: 
+    secs: 1651241842
+    nsecs: 603921000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.63598698972
+      y: -0.0902359558039
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.994426789493
+      w: 0.105429409268
+---
+header: 
+  seq: 66
+  stamp: 
+    secs: 1651241843
+    nsecs: 803941000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.72337192934
+      y: -0.106994941537
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999597305948
+      w: 0.0283765033226
+---
+header: 
+  seq: 67
+  stamp: 
+    secs: 1651241844
+    nsecs: 803966000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.6906652798
+      y: -0.0768008609025
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.997328733031
+      w: 0.0730438106246
+---
+header: 
+  seq: 68
+  stamp: 
+    secs: 1651241845
+    nsecs: 904041000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.85955896321
+      y: -0.0974424243272
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.992358128363
+      w: 0.12339102509
+---
+header: 
+  seq: 69
+  stamp: 
+    secs: 1651241846
+    nsecs: 904029000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.68703871165
+      y: -0.0858788554195
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999016417319
+      w: 0.0443418304342
+---
+header: 
+  seq: 70
+  stamp: 
+    secs: 1651241847
+    nsecs: 904024000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.89488849552
+      y: -0.113909383552
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.99896215085
+      w: 0.0455480095064
+---
+header: 
+  seq: 71
+  stamp: 
+    secs: 1651241848
+    nsecs: 904047000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.82769517544
+      y: -0.118014159011
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999650937902
+      w: 0.0264197341361
+---
+header: 
+  seq: 72
+  stamp: 
+    secs: 1651241849
+    nsecs: 904065000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.80009377973
+      y: -0.114653204885
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999579692892
+      w: 0.0289903011113
+---
+header: 
+  seq: 73
+  stamp: 
+    secs: 1651241850
+    nsecs: 904110000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.78897503625
+      y: -0.131814987307
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.996111234683
+      w: 0.0881045296108
+---
+header: 
+  seq: 74
+  stamp: 
+    secs: 1651241851
+    nsecs: 904099000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.76285132798
+      y: -0.0747824343467
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.99989199126
+      w: 0.0146971362796
+---
+header: 
+  seq: 75
+  stamp: 
+    secs: 1651241852
+    nsecs: 904118000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.65681643604
+      y: -0.0921805831489
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.998363420502
+      w: 0.0571881159216
+---
+header: 
+  seq: 76
+  stamp: 
+    secs: 1651241853
+    nsecs: 904138000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.66733583892
+      y: -0.0775098065022
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999440996753
+      w: 0.0334319309771
+---
+header: 
+  seq: 77
+  stamp: 
+    secs: 1651241854
+    nsecs: 904213000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.66515329922
+      y: -0.0184837049932
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.98513265643
+      w: 0.171795370237
+---
+header: 
+  seq: 78
+  stamp: 
+    secs: 1651241856
+    nsecs:   4209000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.64556669437
+      y: -0.0359847005864
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.987104439755
+      w: 0.160077559378
+---
+header: 
+  seq: 79
+  stamp: 
+    secs: 1651241857
+    nsecs: 104229000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.40069773517
+      y: 0.110470840778
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.99087123872
+      w: 0.13481167708
+---
+header: 
+  seq: 80
+  stamp: 
+    secs: 1651241858
+    nsecs: 104298000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.34314923303
+      y: 0.151203359664
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999118534169
+      w: 0.0419780261535
+---
+header: 
+  seq: 81
+  stamp: 
+    secs: 1651241859
+    nsecs: 204254000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.37493584796
+      y: 0.150086414869
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999948512787
+      w: 0.0101475009373
+---
+header: 
+  seq: 82
+  stamp: 
+    secs: 1651241860
+    nsecs: 204261000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.33666541647
+      y: 0.194803649382
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.994591807525
+      w: 0.10386114001
+---
+header: 
+  seq: 83
+  stamp: 
+    secs: 1651241861
+    nsecs: 204278000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.41796752081
+      y: 0.20112714131
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999995276184
+      w: 0.00307369649007
+---
+header: 
+  seq: 84
+  stamp: 
+    secs: 1651241862
+    nsecs: 204324000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.45267013191
+      y: 0.205207041405
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.79799770736
+      w: 0.602660484061
+---
+header: 
+  seq: 85
+  stamp: 
+    secs: 1651241863
+    nsecs: 204342000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.55194713198
+      y: 0.237688038366
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.880842062698
+      w: 0.473410245539
+---
+header: 
+  seq: 86
+  stamp: 
+    secs: 1651241864
+    nsecs: 304371000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.57654179563
+      y: 0.161130617281
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.798643334067
+      w: 0.601804640187
+---
+header: 
+  seq: 87
+  stamp: 
+    secs: 1651241865
+    nsecs: 304628000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.81045368278
+      y: 0.173058083567
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.99949923201
+      w: 0.0316430910578
+---
+header: 
+  seq: 88
+  stamp: 
+    secs: 1651241866
+    nsecs: 304369000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.79417447712
+      y: 0.141328072803
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999182908477
+      w: 0.0404167713661
+---
+header: 
+  seq: 89
+  stamp: 
+    secs: 1651241867
+    nsecs: 404462000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.69239337633
+      y: 0.167608406316
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.996188444816
+      w: 0.0872271885136
+---
+header: 
+  seq: 90
+  stamp: 
+    secs: 1651241868
+    nsecs: 404442000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.67188326303
+      y: 0.193588882199
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999497258026
+      w: 0.0317053812263
+---
+header: 
+  seq: 91
+  stamp: 
+    secs: 1651241869
+    nsecs: 404429000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.66071318061
+      y: 0.19367217283
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999531651642
+      w: 0.0306019176759
+---
+header: 
+  seq: 92
+  stamp: 
+    secs: 1651241870
+    nsecs: 404483000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.59320992208
+      y: 0.227458724832
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999995831944
+      w: 0.00288722947303
+---
+header: 
+  seq: 93
+  stamp: 
+    secs: 1651241871
+    nsecs: 404492000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.57167933068
+      y: 0.244772303728
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999900994661
+      w: 0.0140712783784
+---
+header: 
+  seq: 94
+  stamp: 
+    secs: 1651241872
+    nsecs: 404492000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.22566286039
+      y: -0.0897099638803
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.996474835356
+      w: 0.083892207642
+---
+header: 
+  seq: 95
+  stamp: 
+    secs: 1651241878
+    nsecs: 504635000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 0.890545560092
+      y: -0.398963453656
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.664431977502
+      w: 0.747348745415
+  - 
+    position: 
+      x: 6.1381403818
+      y: -14.3935890486
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+---
+header: 
+  seq: 96
+  stamp: 
+    secs: 1651241879
+    nsecs: 504621000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 0.869560556613
+      y: -0.425824275299
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.335303620428
+      w: 0.942110122081
+---
+header: 
+  seq: 97
+  stamp: 
+    secs: 1651241880
+    nsecs: 504666000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 0.82018793964
+      y: -0.452912956876
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.780124886485
+      w: 0.62562381787
+---
+header: 
+  seq: 98
+  stamp: 
+    secs: 1651241881
+    nsecs: 504666000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.535001302
+      y: 0.0841972372438
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.942141700125
+      w: 0.335214881659
+---
+header: 
+  seq: 99
+  stamp: 
+    secs: 1651241882
+    nsecs: 504682000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.20714939707
+      y: -0.580975522976
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.908943707595
+      w: 0.416918860719
+---
+header: 
+  seq: 100
+  stamp: 
+    secs: 1651241883
+    nsecs: 504702000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.42484868122
+      y: -0.0469230232039
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.993399779946
+      w: 0.114703431527
+---
+header: 
+  seq: 101
+  stamp: 
+    secs: 1651241884
+    nsecs: 604719000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.3926407537
+      y: -0.17657771048
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.989304202365
+      w: 0.145867046254
+---
+header: 
+  seq: 102
+  stamp: 
+    secs: 1651241885
+    nsecs: 604742000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.44400346753
+      y: -0.199137536781
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.976034671057
+      w: 0.217615075062
+---
+header: 
+  seq: 103
+  stamp: 
+    secs: 1651241886
+    nsecs: 604771000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.41481035674
+      y: -0.206213324817
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.986805232293
+      w: 0.161911807842
+---
+header: 
+  seq: 104
+  stamp: 
+    secs: 1651241887
+    nsecs: 704831000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.37241504711
+      y: -0.166081853332
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.987794128455
+      w: 0.15576507885
+---
+header: 
+  seq: 105
+  stamp: 
+    secs: 1651241888
+    nsecs: 704801000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.37770180046
+      y: -0.153521263428
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.982405353144
+      w: 0.186761136518
+---
+header: 
+  seq: 106
+  stamp: 
+    secs: 1651241889
+    nsecs: 804854000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.42607846373
+      y: -0.142985558888
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.993423317231
+      w: 0.114499400796
+---
+header: 
+  seq: 107
+  stamp: 
+    secs: 1651241890
+    nsecs: 804842000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.47316135459
+      y: -0.232686480214
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999044322437
+      w: 0.0437086010514
+---
+header: 
+  seq: 108
+  stamp: 
+    secs: 1651241891
+    nsecs: 804857000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.48138881533
+      y: -0.171842160966
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.998846110415
+      w: 0.04802549019
+---
+header: 
+  seq: 109
+  stamp: 
+    secs: 1651241892
+    nsecs: 904878000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.44077805835
+      y: -0.183099668877
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999984939441
+      w: 0.00548825034575
+---
+header: 
+  seq: 110
+  stamp: 
+    secs: 1651241894
+    nsecs:   4899000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.53574528963
+      y: -0.171557783046
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.994949214808
+      w: 0.100379579361
+---
+header: 
+  seq: 111
+  stamp: 
+    secs: 1651241895
+    nsecs: 104929000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.46810381212
+      y: -0.153898597535
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.988872770716
+      w: 0.148763716466
+---
+header: 
+  seq: 112
+  stamp: 
+    secs: 1651241896
+    nsecs: 204959000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.5560386001
+      y: -0.178358275818
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999980575663
+      w: 0.00623284024018
+---
+header: 
+  seq: 113
+  stamp: 
+    secs: 1651241897
+    nsecs: 205022000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.48966282075
+      y: -0.150134112436
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.996621125829
+      w: 0.0821360551222
+---
+header: 
+  seq: 114
+  stamp: 
+    secs: 1651241898
+    nsecs: 205015000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.4959818376
+      y: -0.184756084644
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999358076818
+      w: 0.0358250512792
+---
+header: 
+  seq: 115
+  stamp: 
+    secs: 1651241899
+    nsecs: 305030000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.54430886629
+      y: -0.120799763544
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.980240839677
+      w: 0.197807725404
+---
+header: 
+  seq: 116
+  stamp: 
+    secs: 1651241900
+    nsecs: 305088000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.48761540823
+      y: -0.163196252868
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.973806276454
+      w: 0.227379277726
+---
+header: 
+  seq: 117
+  stamp: 
+    secs: 1651241901
+    nsecs: 405089000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.50243224246
+      y: -0.193425540261
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.99255288971
+      w: 0.121814453696
+---
+header: 
+  seq: 118
+  stamp: 
+    secs: 1651241902
+    nsecs: 505133000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.54853395673
+      y: -0.144814548293
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.981561800006
+      w: 0.191145056878
+---
+header: 
+  seq: 119
+  stamp: 
+    secs: 1651241903
+    nsecs: 605082000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.46260298945
+      y: -0.175646798581
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.977196681847
+      w: 0.212336160338
+---
+header: 
+  seq: 120
+  stamp: 
+    secs: 1651241904
+    nsecs: 605141000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.44543033623
+      y: -0.148509294449
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.991942690527
+      w: 0.126687405489
+---
+header: 
+  seq: 121
+  stamp: 
+    secs: 1651241905
+    nsecs: 605178000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.54498219349
+      y: -0.107540140805
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.980728122241
+      w: 0.195377455826
+---
+header: 
+  seq: 122
+  stamp: 
+    secs: 1651241906
+    nsecs: 705148000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.49128563451
+      y: -0.113158119876
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.975138508961
+      w: 0.221596228175
+---
+header: 
+  seq: 123
+  stamp: 
+    secs: 1651241907
+    nsecs: 805186000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.42417868453
+      y: -0.145006465015
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.989932595037
+      w: 0.141539596166
+---
+header: 
+  seq: 124
+  stamp: 
+    secs: 1651241908
+    nsecs: 905215000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.56951403483
+      y: -0.163346355207
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.994812010921
+      w: 0.101730344183
+---
+header: 
+  seq: 125
+  stamp: 
+    secs: 1651241909
+    nsecs: 905262000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.4586328004
+      y: -0.145903478108
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.995938571576
+      w: 0.0900353355517
+---
+header: 
+  seq: 126
+  stamp: 
+    secs: 1651241911
+    nsecs:   5269000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.44527097004
+      y: -0.109695258485
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.969302339232
+      w: 0.24587186736
+---
+header: 
+  seq: 127
+  stamp: 
+    secs: 1651241912
+    nsecs: 105273000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.51349187973
+      y: -0.134275200654
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.983110277433
+      w: 0.18301415903
+---
+header: 
+  seq: 128
+  stamp: 
+    secs: 1651241913
+    nsecs: 105300000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.49937223651
+      y: -0.13216853885
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.980511690471
+      w: 0.196460746332
+---
+header: 
+  seq: 129
+  stamp: 
+    secs: 1651241914
+    nsecs: 105314000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.47514639888
+      y: -0.140986392418
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.975196362285
+      w: 0.221341489529
+---
+header: 
+  seq: 130
+  stamp: 
+    secs: 1651241915
+    nsecs: 205382000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.46468485764
+      y: -0.155668634163
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.991495421761
+      w: 0.130141571481
+---
+header: 
+  seq: 131
+  stamp: 
+    secs: 1651241916
+    nsecs: 205355000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.52329831839
+      y: -0.131957922777
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.960434956409
+      w: 0.278504388669
+---
+header: 
+  seq: 132
+  stamp: 
+    secs: 1651241917
+    nsecs: 305374000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.64811319853
+      y: -0.117607304762
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.996336721247
+      w: 0.0855168866092
+---
+header: 
+  seq: 133
+  stamp: 
+    secs: 1651241918
+    nsecs: 305371000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.62358404296
+      y: -0.066305837295
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.971009601563
+      w: 0.239040485425
+---
+header: 
+  seq: 134
+  stamp: 
+    secs: 1651241919
+    nsecs: 305389000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.54013255001
+      y: -0.0519790613608
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.895833425903
+      w: 0.444390001051
+---
+header: 
+  seq: 135
+  stamp: 
+    secs: 1651241920
+    nsecs: 305463000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.55960005099
+      y: -0.0531018368864
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.913651453048
+      w: 0.406498489964
+---
+header: 
+  seq: 136
+  stamp: 
+    secs: 1651241921
+    nsecs: 305416000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.58190694709
+      y: -0.0555841621151
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.907747688695
+      w: 0.419516547552
+---
+header: 
+  seq: 137
+  stamp: 
+    secs: 1651241922
+    nsecs: 405473000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.55626572048
+      y: -0.0810466738315
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.862515696946
+      w: 0.506030307908
+---
+header: 
+  seq: 138
+  stamp: 
+    secs: 1651241923
+    nsecs: 605520000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.62603126979
+      y: -0.135865399925
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.913414256464
+      w: 0.407031197931
+---
+header: 
+  seq: 139
+  stamp: 
+    secs: 1651241924
+    nsecs: 605488000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.63308075871
+      y: -0.147825695901
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.974767006563
+      w: 0.223224736346
+---
+header: 
+  seq: 140
+  stamp: 
+    secs: 1651241925
+    nsecs: 605508000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.61415121105
+      y: -0.11209069004
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.974095383747
+      w: 0.226137531965
+---
+header: 
+  seq: 141
+  stamp: 
+    secs: 1651241926
+    nsecs: 605548000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.57084258522
+      y: -0.113023985078
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.897326785412
+      w: 0.441366786451
+---
+header: 
+  seq: 142
+  stamp: 
+    secs: 1651241927
+    nsecs: 605542000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.54901181008
+      y: -0.122354588525
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.970149358159
+      w: 0.242508191333
+---
+header: 
+  seq: 143
+  stamp: 
+    secs: 1651241928
+    nsecs: 705574000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.57350739972
+      y: -0.123971163954
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.994965875483
+      w: 0.100214303497
+---
+header: 
+  seq: 144
+  stamp: 
+    secs: 1651241929
+    nsecs: 705614000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.59717438891
+      y: -0.174293483958
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999982671685
+      w: 0.00588696269621
+---
+header: 
+  seq: 145
+  stamp: 
+    secs: 1651241930
+    nsecs: 705618000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.56836665459
+      y: -0.155516224686
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.99791755989
+      w: 0.0645022764232
+---
+header: 
+  seq: 146
+  stamp: 
+    secs: 1651241931
+    nsecs: 805626000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.52735385821
+      y: -0.104877392639
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.966949289666
+      w: 0.254968765174
+---
+header: 
+  seq: 147
+  stamp: 
+    secs: 1651241932
+    nsecs: 805678000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.52368013551
+      y: -0.10212365492
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.967577774135
+      w: 0.252573258678
+---
+header: 
+  seq: 148
+  stamp: 
+    secs: 1651241933
+    nsecs: 805687000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.54015506393
+      y: -0.145754433372
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.997190533767
+      w: 0.0749068712805
+---
+header: 
+  seq: 149
+  stamp: 
+    secs: 1651241934
+    nsecs: 805711000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.51974595056
+      y: -0.15614196177
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999833447423
+      w: 0.0182504086051
+---
+header: 
+  seq: 150
+  stamp: 
+    secs: 1651241935
+    nsecs: 805701000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.50293768752
+      y: -0.10652358879
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.922560581665
+      w: 0.385852268567
+---
+header: 
+  seq: 151
+  stamp: 
+    secs: 1651241936
+    nsecs: 805740000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.5470369139
+      y: -0.100634538069
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.972460961519
+      w: 0.233065824009
+---
+header: 
+  seq: 152
+  stamp: 
+    secs: 1651241937
+    nsecs: 905745000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.54529444063
+      y: -0.131711902521
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.993629202081
+      w: 0.112698752305
+---
+header: 
+  seq: 153
+  stamp: 
+    secs: 1651241938
+    nsecs: 905763000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.62135102667
+      y: -0.132464114388
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999438110525
+      w: 0.0335181030101
+---
+header: 
+  seq: 154
+  stamp: 
+    secs: 1651241939
+    nsecs: 905785000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.6082183514
+      y: -0.0644255123917
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.949179505734
+      w: 0.314735231417
+---
+header: 
+  seq: 155
+  stamp: 
+    secs: 1651241940
+    nsecs: 905810000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.58789441558
+      y: -0.112602627286
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.996648740423
+      w: 0.0818002946978
+---
+header: 
+  seq: 156
+  stamp: 
+    secs: 1651241942
+    nsecs:   5824000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.57362315131
+      y: -0.12082723947
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.991988481149
+      w: 0.126328354965
+---
+header: 
+  seq: 157
+  stamp: 
+    secs: 1651241943
+    nsecs:   5836000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.59724880324
+      y: -0.130999648275
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.986854830214
+      w: 0.161609232668
+---
+header: 
+  seq: 158
+  stamp: 
+    secs: 1651241944
+    nsecs:   5860000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.60446965258
+      y: -0.131592559481
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.985953510879
+      w: 0.167019981993
+---
+header: 
+  seq: 159
+  stamp: 
+    secs: 1651241945
+    nsecs:   6215000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.57626296447
+      y: -0.112204292728
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.949471205091
+      w: 0.313854155146
+---
+header: 
+  seq: 160
+  stamp: 
+    secs: 1651241946
+    nsecs:   5918000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.57462645635
+      y: -0.124120291357
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.983322295747
+      w: 0.181871555464
+---
+header: 
+  seq: 161
+  stamp: 
+    secs: 1651241947
+    nsecs:   5978000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.59587222589
+      y: -0.154327605069
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.997656885888
+      w: 0.0684159195003
+---
+header: 
+  seq: 162
+  stamp: 
+    secs: 1651241948
+    nsecs: 105997000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.64145548434
+      y: -0.162408779588
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.997156582626
+      w: 0.0753574795651
+---
+header: 
+  seq: 163
+  stamp: 
+    secs: 1651241949
+    nsecs: 205991000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.55742311755
+      y: -0.109835726649
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.990947621984
+      w: 0.134249061391
+---
+header: 
+  seq: 164
+  stamp: 
+    secs: 1651241950
+    nsecs: 306009000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.57407815931
+      y: -0.112211734992
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.989983011554
+      w: 0.141186532058
+---
+header: 
+  seq: 165
+  stamp: 
+    secs: 1651241951
+    nsecs: 306077000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.62520483408
+      y: -0.163488551016
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999883463524
+      w: 0.0152662821895
+---
+header: 
+  seq: 166
+  stamp: 
+    secs: 1651241952
+    nsecs: 406050000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.55975055839
+      y: -0.137964137921
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.997430082343
+      w: 0.0716465689121
+---
+header: 
+  seq: 167
+  stamp: 
+    secs: 1651241953
+    nsecs: 506042000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.57068074468
+      y: -0.130501650654
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.998762600206
+      w: 0.0497319658653
+---
+header: 
+  seq: 168
+  stamp: 
+    secs: 1651241954
+    nsecs: 606089000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.5500372211
+      y: -0.160294391439
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999585825421
+      w: 0.028778075291
+---
+header: 
+  seq: 169
+  stamp: 
+    secs: 1651241955
+    nsecs: 606124000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.62364755413
+      y: -0.118177266721
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.975385591736
+      w: 0.220506116545
+---
+header: 
+  seq: 170
+  stamp: 
+    secs: 1651241956
+    nsecs: 606099000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.6550992948
+      y: -0.116383916722
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.913467654518
+      w: 0.406911346793
+---
+header: 
+  seq: 171
+  stamp: 
+    secs: 1651241957
+    nsecs: 606123000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.62477224661
+      y: -0.122517893153
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.994696749093
+      w: 0.102851238901
+---
+header: 
+  seq: 172
+  stamp: 
+    secs: 1651241958
+    nsecs: 606198000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.59447066662
+      y: -0.113978563191
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.988586923107
+      w: 0.15065156973
+---
+header: 
+  seq: 173
+  stamp: 
+    secs: 1651241959
+    nsecs: 606199000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.6012454104
+      y: -0.132868577307
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.996880371384
+      w: 0.0789273409489
+---
+header: 
+  seq: 174
+  stamp: 
+    secs: 1651241960
+    nsecs: 606200000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.53827671975
+      y: -0.170306908335
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.996724360182
+      w: 0.080873665797
+---
+header: 
+  seq: 175
+  stamp: 
+    secs: 1651241961
+    nsecs: 606248000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.54513505211
+      y: -0.139407371432
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.995443677485
+      w: 0.0953513762654
+---
+header: 
+  seq: 176
+  stamp: 
+    secs: 1651241962
+    nsecs: 606298000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.45836464591
+      y: -0.127109801901
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.979407813649
+      w: 0.201891888304
+---
+header: 
+  seq: 177
+  stamp: 
+    secs: 1651241963
+    nsecs: 606230000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.49338224961
+      y: -0.129497360175
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999718256982
+      w: 0.0237361887487
+---
+header: 
+  seq: 178
+  stamp: 
+    secs: 1651241964
+    nsecs: 706278000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.52880946626
+      y: -0.131299030835
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.99770908242
+      w: 0.0676504756596
+---
+header: 
+  seq: 179
+  stamp: 
+    secs: 1651241965
+    nsecs: 706301000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.51588658469
+      y: -0.130174656723
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.998336557207
+      w: 0.0576551692667
+---
+header: 
+  seq: 180
+  stamp: 
+    secs: 1651241966
+    nsecs: 806322000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.38690024584
+      y: -0.0797455293779
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.968744108316
+      w: 0.248062195031
+---
+header: 
+  seq: 181
+  stamp: 
+    secs: 1651241967
+    nsecs: 906342000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.38775120977
+      y: -0.105971800561
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.968325996115
+      w: 0.249689337474
+---
+header: 
+  seq: 182
+  stamp: 
+    secs: 1651241968
+    nsecs: 706358000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.42068421661
+      y: -0.123692507581
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.977498711296
+      w: 0.210941388578
+---
+header: 
+  seq: 183
+  stamp: 
+    secs: 1651241969
+    nsecs: 506343000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.42318554918
+      y: -0.120726348017
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.97766562879
+      w: 0.210166406169
+---
+header: 
+  seq: 184
+  stamp: 
+    secs: 1651241970
+    nsecs: 306389000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.46136067496
+      y: -0.146087041898
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.988600545922
+      w: 0.150562148636
+---
+header: 
+  seq: 185
+  stamp: 
+    secs: 1651241971
+    nsecs: 106375000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.42534099845
+      y: -0.155784785909
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.98833614281
+      w: 0.152288111209
+---
+header: 
+  seq: 186
+  stamp: 
+    secs: 1651241971
+    nsecs: 906450000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.42676664274
+      y: -0.155770606586
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.988758856388
+      w: 0.149518975099
+---
+header: 
+  seq: 187
+  stamp: 
+    secs: 1651241972
+    nsecs: 706411000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.50586963522
+      y: -0.157551366105
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.996337262819
+      w: 0.0855105766418
+---
+header: 
+  seq: 188
+  stamp: 
+    secs: 1651241973
+    nsecs: 506464000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.47108916223
+      y: -0.168205559021
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.983700621578
+      w: 0.179814034788
+---
+header: 
+  seq: 189
+  stamp: 
+    secs: 1651241974
+    nsecs: 306455000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.483514934
+      y: -0.130041674385
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.980393287957
+      w: 0.197050757242
+---
+header: 
+  seq: 190
+  stamp: 
+    secs: 1651241975
+    nsecs: 106481000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.43776177131
+      y: -0.144199508239
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.994877180011
+      w: 0.101091031713
+---
+header: 
+  seq: 191
+  stamp: 
+    secs: 1651241975
+    nsecs: 906463000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.42812163548
+      y: -0.109621561874
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.980986995064
+      w: 0.194073479682
+---
+header: 
+  seq: 192
+  stamp: 
+    secs: 1651241976
+    nsecs: 706513000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.46383330729
+      y: -0.11598089804
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.982716953408
+      w: 0.185114530722
+---
+header: 
+  seq: 193
+  stamp: 
+    secs: 1651241977
+    nsecs: 506495000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.48589473546
+      y: -0.142001443897
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.998025388838
+      w: 0.0628118080788
+---
+header: 
+  seq: 194
+  stamp: 
+    secs: 1651241978
+    nsecs: 306545000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.50931319245
+      y: -0.160477392412
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.979967719057
+      w: 0.19915639484
+---
+header: 
+  seq: 195
+  stamp: 
+    secs: 1651241979
+    nsecs: 106552000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.43633659798
+      y: -0.133756944143
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.989236444051
+      w: 0.146325861559
+---
+header: 
+  seq: 196
+  stamp: 
+    secs: 1651241979
+    nsecs: 906539000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.45390962943
+      y: -0.17781039021
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.986318480995
+      w: 0.164851005601
+---
+header: 
+  seq: 197
+  stamp: 
+    secs: 1651241980
+    nsecs: 706584000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.45272905776
+      y: -0.163852252885
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.991686953941
+      w: 0.128673949899
+---
+header: 
+  seq: 198
+  stamp: 
+    secs: 1651241981
+    nsecs: 706612000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.48153669439
+      y: -0.163486232896
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.98536703291
+      w: 0.17044591651
+---
+header: 
+  seq: 199
+  stamp: 
+    secs: 1651241982
+    nsecs: 706660000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.46796109693
+      y: -0.142561610726
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.976940833118
+      w: 0.213510207219
+---
+header: 
+  seq: 200
+  stamp: 
+    secs: 1651241983
+    nsecs: 606645000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.42078918142
+      y: -0.193179615558
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.983081961555
+      w: 0.183166200116
+---
+header: 
+  seq: 201
+  stamp: 
+    secs: 1651241984
+    nsecs: 406631000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.47535335942
+      y: -0.130486624348
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.988395546653
+      w: 0.15190208477
+---
+header: 
+  seq: 202
+  stamp: 
+    secs: 1651241985
+    nsecs: 306688000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.47321400761
+      y: -0.130175164139
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.95979220308
+      w: 0.280711465579
+---
+header: 
+  seq: 203
+  stamp: 
+    secs: 1651241986
+    nsecs: 206693000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.47052781094
+      y: -0.113652574049
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.990914563465
+      w: 0.134492854505
+---
+header: 
+  seq: 204
+  stamp: 
+    secs: 1651241987
+    nsecs: 306685000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.52661783707
+      y: -0.161426018165
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.996817016712
+      w: 0.0797234921
+---
+header: 
+  seq: 205
+  stamp: 
+    secs: 1651241988
+    nsecs: 206703000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.53032122332
+      y: -0.137943364103
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.995803140994
+      w: 0.0915210597978
+---
+header: 
+  seq: 206
+  stamp: 
+    secs: 1651241989
+    nsecs: 406753000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.46948445311
+      y: -0.0951837336656
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.996436375174
+      w: 0.0843477932698
+---
+header: 
+  seq: 207
+  stamp: 
+    secs: 1651241990
+    nsecs: 606765000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.5444709935
+      y: -0.16500363719
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.997825795369
+      w: 0.0659066164796
+---
+header: 
+  seq: 208
+  stamp: 
+    secs: 1651241991
+    nsecs: 706791000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.48904369212
+      y: -0.160073192683
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.998966948443
+      w: 0.0454426662753
+---
+header: 
+  seq: 209
+  stamp: 
+    secs: 1651241992
+    nsecs: 706789000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.60041540498
+      y: -0.154689157543
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.990063780416
+      w: 0.140619026838
+---
+header: 
+  seq: 210
+  stamp: 
+    secs: 1651241993
+    nsecs: 806809000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.56498211282
+      y: -0.167045310114
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.992816962437
+      w: 0.119643132261
+---
+header: 
+  seq: 211
+  stamp: 
+    secs: 1651241994
+    nsecs: 806866000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.5536662352
+      y: -0.158860520567
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999999427258
+      w: 0.00107027274119
+---
+header: 
+  seq: 212
+  stamp: 
+    secs: 1651241995
+    nsecs: 806877000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.52396510256
+      y: -0.135363941119
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.995465055789
+      w: 0.0951279280864
+---
+header: 
+  seq: 213
+  stamp: 
+    secs: 1651241997
+    nsecs:   6904000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.63783485414
+      y: -0.118645870057
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.982155871293
+      w: 0.188068722771
+---
+header: 
+  seq: 214
+  stamp: 
+    secs: 1651241998
+    nsecs: 106933000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.55550554808
+      y: -0.148826378331
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.994560577544
+      w: 0.104159769559
+---
+header: 
+  seq: 215
+  stamp: 
+    secs: 1651241999
+    nsecs: 206910000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.59583605647
+      y: -0.149209804192
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999348508788
+      w: 0.0360909681737
+---
+header: 
+  seq: 216
+  stamp: 
+    secs: 1651242000
+    nsecs: 206960000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.54696583453
+      y: -0.141316217524
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999999708883
+      w: 0.000763042513006
+---
+header: 
+  seq: 217
+  stamp: 
+    secs: 1651242001
+    nsecs: 306960000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.54576044727
+      y: -0.153277468725
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.99920967771
+      w: 0.0397494650307
+---
+header: 
+  seq: 218
+  stamp: 
+    secs: 1651242002
+    nsecs: 106999000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.68716886244
+      y: -0.122965994978
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.997591081998
+      w: 0.0693688194986
+---
+header: 
+  seq: 219
+  stamp: 
+    secs: 1651242003
+    nsecs:   6997000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.63746293891
+      y: -0.136927285255
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.995352033868
+      w: 0.0963033160163
+---
+header: 
+  seq: 220
+  stamp: 
+    secs: 1651242003
+    nsecs: 906999000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.6004502079
+      y: -0.123576887586
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.990930530001
+      w: 0.134375164042
+---
+header: 
+  seq: 221
+  stamp: 
+    secs: 1651242004
+    nsecs: 907054000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.69656685708
+      y: -0.107640951298
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.997927131476
+      w: 0.0643540228975
+---
+header: 
+  seq: 222
+  stamp: 
+    secs: 1651242005
+    nsecs: 907053000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.66302921141
+      y: 0.0226550320827
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.918761436454
+      w: 0.394813149332
+---
+header: 
+  seq: 223
+  stamp: 
+    secs: 1651242007
+    nsecs:   7072000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.6588150578
+      y: -0.0804925781285
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.996919362426
+      w: 0.0784333144843
+---
+header: 
+  seq: 224
+  stamp: 
+    secs: 1651242008
+    nsecs: 107567000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.73346496727
+      y: -0.101894004315
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999998673338
+      w: 0.00162890214475
+---
+header: 
+  seq: 225
+  stamp: 
+    secs: 1651242009
+    nsecs: 107110000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.81069157035
+      y: -0.208339805289
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.989438799268
+      w: 0.144951241812
+---
+header: 
+  seq: 226
+  stamp: 
+    secs: 1651242010
+    nsecs: 107172000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.81032199791
+      y: -0.208465259144
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.990373234115
+      w: 0.138422747945
+---
+header: 
+  seq: 227
+  stamp: 
+    secs: 1651242011
+    nsecs: 207144000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.75338088426
+      y: -0.181943400632
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.995136209143
+      w: 0.0985085034572
+---
+header: 
+  seq: 228
+  stamp: 
+    secs: 1651242012
+    nsecs: 207190000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.72445064079
+      y: -0.157500798106
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.998948305055
+      w: 0.0458506687853
+---
+header: 
+  seq: 229
+  stamp: 
+    secs: 1651242013
+    nsecs: 207181000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.69499196661
+      y: -0.143024207141
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999148788658
+      w: 0.041251643886
+---
+header: 
+  seq: 230
+  stamp: 
+    secs: 1651242014
+    nsecs: 207227000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.71449895211
+      y: -0.142479289686
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999601902382
+      w: 0.0282141233252
+---
+header: 
+  seq: 231
+  stamp: 
+    secs: 1651242015
+    nsecs: 307222000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.78939187108
+      y: -0.197086674028
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.997370367798
+      w: 0.0724730945842
+---
+header: 
+  seq: 232
+  stamp: 
+    secs: 1651242016
+    nsecs: 307236000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.7508557876
+      y: -0.197353235074
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.995505765495
+      w: 0.0947009549425
+---
+header: 
+  seq: 233
+  stamp: 
+    secs: 1651242017
+    nsecs: 307305000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.68254247374
+      y: -0.130858364567
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999841161729
+      w: 0.0178227750895
+---
+header: 
+  seq: 234
+  stamp: 
+    secs: 1651242018
+    nsecs: 307287000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.70476737724
+      y: -0.152129505147
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999340000614
+      w: 0.0363257921037
+---
+header: 
+  seq: 235
+  stamp: 
+    secs: 1651242019
+    nsecs: 307294000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.80602592204
+      y: -0.196656302432
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.996466445406
+      w: 0.0839918042409
+---
+header: 
+  seq: 236
+  stamp: 
+    secs: 1651242020
+    nsecs: 307336000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.7820545129
+      y: -0.159796755596
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.998407764496
+      w: 0.0564086499931
+---
+header: 
+  seq: 237
+  stamp: 
+    secs: 1651242021
+    nsecs: 307338000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.69605594027
+      y: -0.162417924969
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.991728460951
+      w: 0.128353651058
+---
+header: 
+  seq: 238
+  stamp: 
+    secs: 1651242022
+    nsecs: 307393000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.72933040268
+      y: -0.135357326514
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.997994893256
+      w: 0.0632944945082
+---
+header: 
+  seq: 239
+  stamp: 
+    secs: 1651242023
+    nsecs: 407437000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.83582232156
+      y: -0.201418626372
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.997053763913
+      w: 0.0767058789563
+---
+header: 
+  seq: 240
+  stamp: 
+    secs: 1651242024
+    nsecs: 407389000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.7177684784
+      y: -0.174870725883
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.998359451939
+      w: 0.0572573551992
+---
+header: 
+  seq: 241
+  stamp: 
+    secs: 1651242025
+    nsecs: 407475000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.74866623897
+      y: -0.109879089291
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999464755699
+      w: 0.0327139437396
+---
+header: 
+  seq: 242
+  stamp: 
+    secs: 1651242026
+    nsecs: 407443000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.71913010685
+      y: -0.150577387686
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999803772125
+      w: 0.0198095240677
+---
+header: 
+  seq: 243
+  stamp: 
+    secs: 1651242027
+    nsecs: 407479000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.78893476269
+      y: -0.207352249446
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.998083150884
+      w: 0.0618871870558
+---
+header: 
+  seq: 244
+  stamp: 
+    secs: 1651242028
+    nsecs: 407480000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.79379069314
+      y: -0.122773838932
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999558709978
+      w: 0.0297049710708
+---
+header: 
+  seq: 245
+  stamp: 
+    secs: 1651242029
+    nsecs: 407519000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.67642061277
+      y: -0.180150264327
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.996188197966
+      w: 0.0872300076374
+---
+header: 
+  seq: 246
+  stamp: 
+    secs: 1651242030
+    nsecs: 407517000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.72888834997
+      y: -0.152247755557
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.997569924357
+      w: 0.0696724193504
+---
+header: 
+  seq: 247
+  stamp: 
+    secs: 1651242031
+    nsecs: 407537000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.84138412354
+      y: -0.129744892109
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.998264519299
+      w: 0.0588892987701
+---
+header: 
+  seq: 248
+  stamp: 
+    secs: 1651242032
+    nsecs: 407553000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.71667966779
+      y: -0.135651319467
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999795193762
+      w: 0.0202378489335
+---
+header: 
+  seq: 249
+  stamp: 
+    secs: 1651242033
+    nsecs: 407564000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.71478343108
+      y: -0.195043048968
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.994668521878
+      w: 0.103123865252
+---
+header: 
+  seq: 250
+  stamp: 
+    secs: 1651242034
+    nsecs: 407587000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.47039139181
+      y: -0.126499579714
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999289570293
+      w: 0.0376875934956
+---
+header: 
+  seq: 251
+  stamp: 
+    secs: 1651242035
+    nsecs: 407635000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.72728424544
+      y: -0.0909111870431
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.997241933241
+      w: 0.0742194488386
+---
+header: 
+  seq: 252
+  stamp: 
+    secs: 1651242036
+    nsecs: 407623000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.66997326479
+      y: -0.160718697437
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999715739291
+      w: 0.0238419926496
+---
+header: 
+  seq: 253
+  stamp: 
+    secs: 1651242037
+    nsecs: 407640000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.63314446909
+      y: -0.16619073778
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.997979405324
+      w: 0.0635382290302
+---
+header: 
+  seq: 254
+  stamp: 
+    secs: 1651242038
+    nsecs: 407719000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.80378243132
+      y: -0.134870157662
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.996430029932
+      w: 0.0844227187992
+---
+header: 
+  seq: 255
+  stamp: 
+    secs: 1651242039
+    nsecs: 507685000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.72596013397
+      y: -0.162877400763
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.996945135641
+      w: 0.0781050351927
+---
+header: 
+  seq: 256
+  stamp: 
+    secs: 1651242040
+    nsecs: 507723000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.71493435427
+      y: -0.162660608434
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.995362938019
+      w: 0.0961905484908
+---
+header: 
+  seq: 257
+  stamp: 
+    secs: 1651242041
+    nsecs: 607784000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.69722954218
+      y: -0.155779948235
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.993691096684
+      w: 0.112151702488
+---
+header: 
+  seq: 258
+  stamp: 
+    secs: 1651242042
+    nsecs: 507748000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.67134271159
+      y: -0.145011757329
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999112341366
+      w: 0.042125162673
+---
+header: 
+  seq: 259
+  stamp: 
+    secs: 1651242043
+    nsecs: 507760000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.69875450231
+      y: -0.146309364417
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.99985190219
+      w: 0.0172096974681
+---
+header: 
+  seq: 260
+  stamp: 
+    secs: 1651242044
+    nsecs: 507781000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.70761145472
+      y: -0.158901997197
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.998209596177
+      w: 0.0598130596189
+---
+header: 
+  seq: 261
+  stamp: 
+    secs: 1651242045
+    nsecs: 507801000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.72227853675
+      y: -0.16746746067
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.997567957194
+      w: 0.0697005794757
+---
+header: 
+  seq: 262
+  stamp: 
+    secs: 1651242046
+    nsecs: 507840000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.70653280136
+      y: -0.145328608983
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999999939273
+      w: 0.000348502217688
+---
+header: 
+  seq: 263
+  stamp: 
+    secs: 1651242047
+    nsecs: 507871000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.68358531808
+      y: -0.144829275525
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999967933522
+      w: 0.00800824122482
+---
+header: 
+  seq: 264
+  stamp: 
+    secs: 1651242048
+    nsecs: 507857000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.71872507866
+      y: -0.168022595187
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.997207340583
+      w: 0.0746827951271
+---
+header: 
+  seq: 265
+  stamp: 
+    secs: 1651242049
+    nsecs: 607910000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.74084525148
+      y: -0.188677554039
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.995645970986
+      w: 0.0932153445443
+---
+header: 
+  seq: 266
+  stamp: 
+    secs: 1651242050
+    nsecs: 607895000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.71236865606
+      y: -0.156847198655
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.999834335849
+      w: 0.0182016718312
+---
+header: 
+  seq: 267
+  stamp: 
+    secs: 1651242051
+    nsecs: 607946000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.68446334518
+      y: -0.146394700503
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999990549439
+      w: 0.00434753184558
+---
+header: 
+  seq: 268
+  stamp: 
+    secs: 1651242052
+    nsecs: 607937000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.69779775762
+      y: -0.175196480612
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.996041521203
+      w: 0.0888891896614
+---
+header: 
+  seq: 269
+  stamp: 
+    secs: 1651242053
+    nsecs: 707955000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.7243047927
+      y: -0.175484695794
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.998104828072
+      w: 0.0615365921974
+---
+header: 
+  seq: 270
+  stamp: 
+    secs: 1651242054
+    nsecs: 708008000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.75151255819
+      y: 0.0697470272149
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.99858690804
+      w: 0.0531430813171
+---
+header: 
+  seq: 271
+  stamp: 
+    secs: 1651242055
+    nsecs: 708020000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.85906089482
+      y: 0.164388780406
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.870430050609
+      w: 0.492292115513
+---
+header: 
+  seq: 272
+  stamp: 
+    secs: 1651242056
+    nsecs: 708012000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.88656169933
+      y: 0.023760082268
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.97368181323
+      w: 0.227911663997
+---
+header: 
+  seq: 273
+  stamp: 
+    secs: 1651242057
+    nsecs: 708089000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.79450938345
+      y: 0.0789829447094
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.998507945724
+      w: 0.0546066143085
+---
+header: 
+  seq: 274
+  stamp: 
+    secs: 1651242058
+    nsecs: 708106000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.84732742285
+      y: 0.0306649064051
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.99156850726
+      w: 0.129583546064
+---
+header: 
+  seq: 275
+  stamp: 
+    secs: 1651242059
+    nsecs: 708116000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.90936475577
+      y: 0.0430843538632
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.992341827293
+      w: 0.123522053923
+---
+header: 
+  seq: 276
+  stamp: 
+    secs: 1651242060
+    nsecs: 708095000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.82972888473
+      y: 0.058652944496
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.993228307825
+      w: 0.116178864405
+---
+header: 
+  seq: 277
+  stamp: 
+    secs: 1651242061
+    nsecs: 808140000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.87053831452
+      y: 0.00853470349453
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.987309303003
+      w: 0.158809131358
+---
+header: 
+  seq: 278
+  stamp: 
+    secs: 1651242062
+    nsecs: 808155000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.86288286999
+      y: 0.037610101623
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.998010193644
+      w: 0.06305278251
+---
+header: 
+  seq: 279
+  stamp: 
+    secs: 1651242063
+    nsecs: 808152000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.86478550469
+      y: -0.00896068951867
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.989777285136
+      w: 0.142621617676
+---
+header: 
+  seq: 280
+  stamp: 
+    secs: 1651242065
+    nsecs:   8227000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.83672892241
+      y: 0.0627161239153
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.996733196263
+      w: 0.0807646919621
+---
+header: 
+  seq: 281
+  stamp: 
+    secs: 1651242066
+    nsecs: 208218000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.65111459508
+      y: 0.0421867758335
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.995750217504
+      w: 0.0920950831569
+---
+header: 
+  seq: 282
+  stamp: 
+    secs: 1651242067
+    nsecs: 208277000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.5469429723
+      y: 0.0728967067592
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.95359719684
+      w: 0.301085347
+---
+header: 
+  seq: 283
+  stamp: 
+    secs: 1651242068
+    nsecs: 208237000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.59840273228
+      y: 0.0946973902372
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.950683850823
+      w: 0.310161596245
+---
+header: 
+  seq: 284
+  stamp: 
+    secs: 1651242069
+    nsecs: 208284000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.61378538792
+      y: 0.107933834924
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.947995278994
+      w: 0.318284386997
+---
+header: 
+  seq: 285
+  stamp: 
+    secs: 1651242070
+    nsecs: 108292000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.70212928826
+      y: 0.0659945883152
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.994842393327
+      w: 0.101432797656
+---
+header: 
+  seq: 286
+  stamp: 
+    secs: 1651242074
+    nsecs: 808360000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.67945529043
+      y: 0.0527041067013
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.997514690153
+      w: 0.070458803058
+---
+header: 
+  seq: 287
+  stamp: 
+    secs: 1651242075
+    nsecs: 808378000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 1.53019525864
+      y: 0.0536229642163
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.988426745657
+      w: 0.151698940237
+---
+header: 
+  seq: 288
+  stamp: 
+    secs: 1651242076
+    nsecs:   8382000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 2.81465119827
+      y: -0.593515814807
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.521049236572
+      w: 0.853526621183
+  - 
+    position: 
+      x: 3.03400878723
+      y: 0.587553010089
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+  - 
+    position: 
+      x: 3.33080802165
+      y: 0.680414394653
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.99975377398
+      w: 0.0221898943784
+---
+header: 
+  seq: 289
+  stamp: 
+    secs: 1651242080
+    nsecs: 908480000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 3.22439480993
+      y: -1.01852158107
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.276730346038
+      w: 0.960947613339
+  - 
+    position: 
+      x: 3.19068762143
+      y: 0.295545456794
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.999792477969
+      w: 0.0203715732593
+  - 
+    position: 
+      x: 2.76467069359
+      y: 0.249836867356
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.779870956653
+      w: 0.625940325405
+---
+header: 
+  seq: 290
+  stamp: 
+    secs: 1651242082
+    nsecs:   8501000
+  frame_id: "base_footprint"
+poses: 
+  - 
+    position: 
+      x: 2.57352353625
+      y: -0.570965102806
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: 0.753081467279
+      w: 0.657927278384
+  - 
+    position: 
+      x: 3.57840861784
+      y: 0.721270479397
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.99993414343
+      w: 0.0114764455649
+  - 
+    position: 
+      x: 2.64302045631
+      y: 0.487558787527
+      z: 0.0
+    orientation: 
+      x: 0.0
+      y: 0.0
+      z: -0.75357263275
+      w: 0.657364653119
+---
