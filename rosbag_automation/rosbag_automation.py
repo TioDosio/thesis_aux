@@ -1,431 +1,376 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-ROS 1 Melodic Rosbag Automation Script
-=====================================
+ROS 1 Melodic Rosbag Automation Script (Python 2.7 Compatible)
+Processes rosbag files by playing them back with additional ROS nodes
+and recording all topics into new rosbag files.
 
-This script automates the process of:
-1. Starting a ROS node (human_detection.launch)
-2. Recording a new rosbag with all topics
-3. Playing back the original rosbag with sync
-4. Processing multiple rosbags in batch
-
-Author: Auto-generated for ROS 1 Melodic
 """
 
-import subprocess
 import os
+import sys
+import subprocess
 import time
 import signal
-import glob
-import sys
 import argparse
+import glob
 import logging
 from datetime import datetime
 
-class RosbagAutomation:
-    """Main automation class for processing rosbags with additional ROS nodes"""
 
-    def __init__(self, input_folder, output_folder, catkin_ws_path):
-        self.input_folder = os.path.abspath(input_folder)
-        self.output_folder = os.path.abspath(output_folder)
-        self.catkin_ws_path = os.path.abspath(catkin_ws_path)
-        self.launch_path = os.path.join(self.catkin_ws_path, "src", "vizzy", "human_detection_3d", "launch")
+class RosbagAutomation:
+    """Automates rosbag processing with ROS nodes"""
+
+    def __init__(self, input_folder,output_folder, catkin_ws,
+                 launch_package="vizzy", launch_file="human_detection.launch",
+                 startup_delay=3.0, recording_delay=2.0):
+        """
+        Initialize the automation system
+
+        Args:
+            input_folder (str): Path to folder containing input rosbag files
+            output_folder (str): Path to folder for output rosbag files
+            catkin_ws (str): Path to catkin workspace
+            launch_package (str): ROS package containing launch file
+            launch_file (str): Launch file name
+            startup_delay (float): Seconds to wait after launching node
+            recording_delay (float): Seconds to wait after starting recording
+        """
+        self.input_folder = os.path.expanduser(input_folder)
+        self.output_folder = os.path.expanduser(output_folder)
+        self.catkin_ws = os.path.expanduser(catkin_ws)
+        self.launch_package = launch_package
+        self.launch_file = launch_file
+        self.startup_delay = startup_delay
+        self.recording_delay = recording_delay
 
         # Process tracking
-        self.processes = {}
-        self.active_processes = []
+        self.processes = []
+        self.roscore_process = None
+        self.node_process = None
+        self.record_process = None
+        self.play_process = None
 
         # Setup logging
         self.setup_logging()
 
-        # Create output directory
-        if not os.path.exists(self.output_folder):
-            os.makedirs(self.output_folder)
-
         # Validate paths
-        self.validate_setup()
+        self.validate_paths()
 
     def setup_logging(self):
-        """Setup logging for the automation process"""
+        """Configure logging for the automation"""
+        log_file = os.path.join(self.output_folder, 'rosbag_automation.log')
         logging.basicConfig(
             level=logging.INFO,
             format='%(asctime)s - %(levelname)s - %(message)s',
             handlers=[
-                logging.StreamHandler(sys.stdout),
-                logging.FileHandler('rosbag_automation.log')
+                logging.FileHandler(log_file),
+                logging.StreamHandler()
             ]
         )
         self.logger = logging.getLogger(__name__)
 
-    def validate_setup(self):
-        """Validate that all required paths and files exist"""
+    def validate_paths(self):
+        """Validate that required paths exist"""
         if not os.path.exists(self.input_folder):
-            raise Exception("Input folder does not exist: {}".format(self.input_folder))
+            raise FileNotFoundError("Input folder does not exist: {}".format(self.input_folder))
 
-        if not os.path.exists(self.catkin_ws_path):
-            raise Exception("Catkin workspace does not exist: {}".format(self.catkin_ws_path))
+        if not os.path.exists(self.catkin_ws):
+            raise FileNotFoundError("Catkin workspace does not exist: {}".format(self.catkin_ws))
 
-        if not os.path.exists(self.launch_path):
-            raise Exception("Launch file path does not exist: {}".format(self.launch_path))
+        # Create output folder if it doesn't exist
+        if not os.path.exists(self.output_folder):
+            os.makedirs(self.output_folder)
+            self.logger.info("Created output folder: {}".format(self.output_folder))
 
-        launch_file = os.path.join(self.launch_path, "human_detection.launch")
-        if not os.path.exists(launch_file):
-            raise Exception("Launch file does not exist: {}".format(launch_file))
-
-        self.logger.info("All paths validated successfully")
+        # Check launch file path
+        launch_path = os.path.join(
+            self.catkin_ws, 
+            "src", 
+            self.launch_package, 
+            "human_detection_3d", 
+            "launch", 
+            self.launch_file
+        )
+        if not os.path.exists(launch_path):
+            raise FileNotFoundError("Launch file does not exist: {}".format(launch_path))
 
     def signal_handler(self, signum, frame):
-        """Handle shutdown signals gracefully"""
-        self.logger.info("Received signal {}, shutting down gracefully...".format(signum))
-        self.cleanup_all_processes()
+        """Handle interrupt signals gracefully"""
+        self.logger.info("Received signal {}. Cleaning up...".format(signum))
+        self.cleanup_processes()
         sys.exit(0)
 
-    def cleanup_all_processes(self):
+    def cleanup_processes(self):
         """Clean up all running processes"""
-        self.logger.info("Cleaning up all processes...")
+        processes_to_cleanup = [
+            (self.play_process, "rosbag play"),
+            (self.record_process, "rosbag record"),
+            (self.node_process, "roslaunch"),
+            (self.roscore_process, "roscore")
+        ]
 
-        for name, process in self.processes.items():
+        for process, name in processes_to_cleanup:
             if process and process.poll() is None:
+                self.logger.info("Terminating {}...".format(name))
                 try:
-                    self.logger.info("Terminating {} (PID: {})".format(name, process.pid))
-                    # Send SIGINT first for graceful shutdown
-                    process.send_signal(signal.SIGINT)
-                    # Wait for process with manual timeout handling
-                    for _ in range(50):  # 5 seconds with 0.1s intervals
-                        if process.poll() is not None:
-                            break
-                        time.sleep(0.1)
-                    else:
-                        # If SIGINT doesn't work, use SIGTERM
-                        self.logger.warning("SIGINT timeout for {}, sending SIGTERM".format(name))
-                        process.terminate()
-                        for _ in range(30):  # 3 seconds with 0.1s intervals
-                            if process.poll() is not None:
-                                break
-                            time.sleep(0.1)
-                        else:
-                            # Last resort: SIGKILL
-                            self.logger.warning("SIGTERM timeout for {}, sending SIGKILL".format(name))
-                            process.kill()
-                            process.wait()
+                    process.terminate()
+                    process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    self.logger.warning("Force killing {}...".format(name))
+                    process.kill()
                 except Exception as e:
                     self.logger.error("Error terminating {}: {}".format(name, e))
-
-        self.processes.clear()
-        self.logger.info("All processes cleaned up")
-
-    def run_command(self, cmd, name, cwd=None, env=None, shell=True):
-        """Run a command and track the process"""
-        try:
-            # Set up environment
-            if env is None:
-                env = os.environ.copy()
-
-            self.logger.info("Starting {}: {}".format(name, cmd))
-
-            process = subprocess.Popen(
-                cmd,
-                shell=shell,
-                cwd=cwd,
-                env=env,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                preexec_fn=os.setsid  # Create new process group
-            )
-
-            self.processes[name] = process
-            return process
-
-        except Exception as e:
-            self.logger.error("Failed to start {}: {}".format(name, e))
-            return None
-
-    def wait_for_topics(self, timeout=30):
-        """Wait for ROS topics to be available"""
-        self.logger.info("Waiting for ROS topics to be available...")
-
-        start_time = time.time()
-        while time.time() - start_time < timeout:
-            try:
-                process = subprocess.Popen(
-                    ["rostopic", "list"],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE
-                )
-                stdout, stderr = process.communicate()
-
-                if process.returncode == 0 and stdout.strip():
-                    topics = stdout.strip().split('\n')
-                    if len(topics) > 1:  # More than just /rosout
-                        self.logger.info("Found {} topics".format(len(topics)))
-                        return True
-
-            except Exception as e:
-                self.logger.debug("Waiting for topics: {}".format(e))
-
-            time.sleep(1)
-
-        self.logger.warning("Timeout waiting for topics")
-        return False
 
     def start_roscore(self):
         """Start roscore if not already running"""
         try:
             # Check if roscore is already running
-            process = subprocess.Popen(
-                ["rostopic", "list"],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE
-            )
-            stdout, stderr = process.communicate()
-
-            if process.returncode == 0:
-                self.logger.info("ROS master already running")
+            with open(os.devnull, 'w') as devnull:
+                result = subprocess.call(
+                    ["rostopic", "list"], 
+                    stdout=devnull, 
+                    stderr=devnull
+                )
+            if result == 0:
+                self.logger.info("roscore is already running")
                 return True
-
-        except:
+        except Exception:
             pass
 
+        # Start roscore
         self.logger.info("Starting roscore...")
-        process = self.run_command("roscore", "roscore")
+        with open(os.devnull, 'w') as devnull:
+            self.roscore_process = subprocess.Popen(
+                ["roscore"],
+                stdout=devnull,
+                stderr=devnull
+            )
 
-        if process:
-            # Wait for roscore to be ready
-            time.sleep(3)
-            return True
+        # Wait for roscore to start
+        max_attempts = 10
+        for attempt in range(max_attempts):
+            try:
+                with open(os.devnull, 'w') as devnull:
+                    result = subprocess.call(
+                        ["rostopic", "list"],
+                        stdout=devnull,
+                        stderr=devnull
+                    )
+                if result == 0:
+                    self.logger.info("roscore started successfully")
+                    return True
+            except Exception:
+                pass
+            time.sleep(1)
 
-        return False
+        raise RuntimeError("Failed to start roscore after {} attempts".format(max_attempts))
 
-    def start_human_detection_node(self):
-        """Start the human detection launch file"""
-        self.logger.info("Starting human detection node...")
+    def set_sim_time(self):
+        """Set use_sim_time parameter to true"""
+        self.logger.info("Setting use_sim_time to true...")
+        try:
+            subprocess.check_call(["rosparam", "set", "use_sim_time", "true"])
+            self.logger.info("use_sim_time set to true")
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError("Failed to set use_sim_time: {}".format(e))
+
+    def launch_node(self):
+        """Launch the ROS node"""
+        launch_dir = os.path.join(
+            self.catkin_ws,
+            "src",
+            self.launch_package,
+            "human_detection_3d",
+            "launch"
+        )
+
+        self.logger.info("Launching node from directory: {}".format(launch_dir))
 
         # Change to launch directory and run roslaunch
-        cmd = "cd {} && roslaunch human_detection.launch".format(self.launch_path)
-        process = self.run_command(cmd, "human_detection", cwd=self.launch_path)
+        self.node_process = subprocess.Popen(
+            ["roslaunch", self.launch_file],
+            cwd=launch_dir,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
 
-        if process:
-            # Wait for node to initialize
-            self.logger.info("Waiting for human detection node to initialize...")
-            time.sleep(3)  # User specified 2-3 seconds
-            return True
+        # Wait for node to initialize
+        self.logger.info("Waiting {:.1f} seconds for node to initialize...".format(self.startup_delay))
+        time.sleep(self.startup_delay)
 
-        return False
+        # Check if node is still running
+        if self.node_process.poll() is not None:
+            stdout, stderr = self.node_process.communicate()
+            raise RuntimeError("Node failed to start. Error: {}".format(stderr))
 
-    def get_all_topics(self):
-        """Get list of all currently published topics"""
+        self.logger.info("Node launched successfully")
+
+    def get_active_topics(self):
+        """Get list of currently active topics"""
         try:
-            process = subprocess.Popen(
-                ["rostopic", "list"],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE
-            )
-            stdout, stderr = process.communicate()
+            result = subprocess.check_output(["rostopic", "list"])
+            topics = result.decode().strip().split('\n')
+            self.logger.info("Found {} active topics".format(len(topics)))
+            return topics
+        except subprocess.CalledProcessError as e:
+            self.logger.error("Failed to get topic list: {}".format(e))
+            return []
 
-            if process.returncode == 0:
-                topics = [t.strip() for t in stdout.strip().split('\n') if t.strip()]
-                self.logger.info("Found {} topics: {}".format(len(topics), topics))
-                return topics
+    def start_recording(self, output_bag_path):
+        """Start recording all topics"""
+        self.logger.info("Starting recording to: {}".format(output_bag_path))
 
-        except Exception as e:
-            self.logger.error("Failed to get topics: {}".format(e))
+        # Use rosbag record -a to record all topics
+        self.record_process = subprocess.Popen(
+            ["rosbag", "record", "-a", "-O", output_bag_path],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
 
-        return []
+        # Wait for recording to start
+        time.sleep(self.recording_delay)
+
+        # Check if recording started successfully
+        if self.record_process.poll() is not None:
+            stdout, stderr = self.record_process.communicate()
+            raise RuntimeError("Recording failed to start. Error: {}".format(stderr))
+
+        self.logger.info("Recording started successfully")
+
+    def play_rosbag(self, input_bag_path):
+        """Play the input rosbag with --clock flag"""
+        self.logger.info("Playing rosbag: {}".format(input_bag_path))
+
+        # Start rosbag play with --clock flag
+        self.play_process = subprocess.Popen(
+            ["rosbag", "play", input_bag_path, "--clock"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+
+        # Wait for playback to complete
+        stdout, stderr = self.play_process.communicate()
+
+        if self.play_process.returncode != 0:
+            raise RuntimeError("Rosbag play failed. Error: {}".format(stderr))
+
+        self.logger.info("Rosbag playback completed")
+
+    def stop_recording(self):
+        """Stop the recording process"""
+        if self.record_process and self.record_process.poll() is None:
+            self.logger.info("Stopping recording...")
+            self.record_process.send_signal(signal.SIGINT)
+
+            # Wait for graceful shutdown
+            try:
+                self.record_process.wait(timeout=10)
+                self.logger.info("Recording stopped successfully")
+            except subprocess.TimeoutExpired:
+                self.logger.warning("Recording did not stop gracefully, force killing...")
+                self.record_process.kill()
 
     def process_single_rosbag(self, input_bag_path):
         """Process a single rosbag file"""
-        input_bag = os.path.abspath(input_bag_path)
+        bag_name = os.path.splitext(os.path.basename(input_bag_path))[0]
+        output_bag_path = os.path.join(self.output_folder, "{}_new.bag".format(bag_name))
 
-        if not os.path.exists(input_bag):
-            self.logger.error("Input bag does not exist: {}".format(input_bag))
-            return False
-
-        # Create output filename with "new" suffix
-        input_bag_basename = os.path.basename(input_bag)
-        output_bag_name = os.path.splitext(input_bag_basename)[0] + "_new.bag"
-        output_bag_path = os.path.join(self.output_folder, output_bag_name)
-
-        self.logger.info("Processing: {} -> {}".format(input_bag, output_bag_path))
+        self.logger.info("Processing: {} -> {}".format(input_bag_path, output_bag_path))
 
         try:
-            # Step 1: Set simulation time parameter
-            self.logger.info("Setting use_sim_time parameter...")
-            process = subprocess.Popen(
-                ["rosparam", "set", "use_sim_time", "true"],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE
-            )
-            stdout, stderr = process.communicate()
-            if process.returncode != 0:
-                self.logger.error("Failed to set use_sim_time parameter")
-                return False
+            # Start recording
+            self.start_recording(output_bag_path)
 
-            # Step 2: Start recording new rosbag with all topics
-            self.logger.info("Starting rosbag recording...")
-            record_cmd = "rosbag record -a -O {}".format(output_bag_path)
-            record_process = self.run_command(record_cmd, "rosbag_record")
+            # Play the rosbag
+            self.play_rosbag(input_bag_path)
 
-            if not record_process:
-                self.logger.error("Failed to start rosbag recording")
-                return False
-
-            # Wait a moment for recording to start
-            time.sleep(2)
-
-            # Step 3: Play original rosbag with clock
-            self.logger.info("Playing original rosbag: {}".format(input_bag))
-            play_cmd = "rosbag play {} --clock".format(input_bag)
-            play_process = self.run_command(play_cmd, "rosbag_play")
-
-            if not play_process:
-                self.logger.error("Failed to start rosbag playback")
-                self.cleanup_all_processes()
-                return False
-
-            # Step 4: Wait for playback to complete
-            self.logger.info("Waiting for rosbag playback to complete...")
-            try:
-                play_process.wait()
-                self.logger.info("Rosbag playback completed")
-            except Exception as e:
-                self.logger.error("Error during playback: {}".format(e))
-                return False
-
-            # Step 5: Stop recording
-            self.logger.info("Stopping rosbag recording...")
-            if record_process and record_process.poll() is None:
-                record_process.send_signal(signal.SIGINT)
-                # Wait for process with manual timeout handling
-                for _ in range(100):  # 10 seconds with 0.1s intervals
-                    if record_process.poll() is not None:
-                        break
-                    time.sleep(0.1)
-                else:
-                    record_process.terminate()
-                    for _ in range(50):  # 5 seconds with 0.1s intervals
-                        if record_process.poll() is not None:
-                            break
-                        time.sleep(0.1)
-                    else:
-                        record_process.kill()
-                        record_process.wait()
-
-            # Clean up processes
-            if "rosbag_play" in self.processes:
-                del self.processes["rosbag_play"]
-            if "rosbag_record" in self.processes:
-                del self.processes["rosbag_record"]
+            # Stop recording
+            self.stop_recording()
 
             # Verify output file was created
-            if os.path.exists(output_bag_path):
-                self.logger.info("Successfully created: {}".format(output_bag_path))
+            if os.path.exists(output_bag_path + ".bag"):
+                final_path = output_bag_path + ".bag"
+                self.logger.info("Successfully created: {}".format(final_path))
                 return True
             else:
-                self.logger.error("Output bag file was not created: {}".format(output_bag_path))
+                self.logger.error("Output file not found: {}".format(output_bag_path))
                 return False
 
         except Exception as e:
-            self.logger.error("Error processing {}: {}".format(input_bag, e))
-            self.cleanup_all_processes()
+            self.logger.error("Error processing {}: {}".format(input_bag_path, e))
             return False
 
-    def process_all_rosbags(self):
-        """Process all rosbag files in the input folder"""
-        # Find all .bag files in input folder
-        bag_pattern = os.path.join(self.input_folder, "*.bag")
-        bag_files = glob.glob(bag_pattern)
-
-        if not bag_files:
-            self.logger.warning("No .bag files found in {}".format(self.input_folder))
-            return
-
-        self.logger.info("Found {} bag files to process".format(len(bag_files)))
-
+    def run(self):
+        """Run the automation for all rosbag files"""
         # Setup signal handlers
         signal.signal(signal.SIGINT, self.signal_handler)
         signal.signal(signal.SIGTERM, self.signal_handler)
 
         try:
             # Start roscore
-            if not self.start_roscore():
-                self.logger.error("Failed to start roscore")
+            self.start_roscore()
+
+            # Set simulation time
+            self.set_sim_time()
+
+            # Launch node
+            self.launch_node()
+
+            # Get list of rosbag files
+            bag_pattern = os.path.join(self.input_folder, "*.bag")
+            bag_files = glob.glob(bag_pattern)
+
+            if not bag_files:
+                self.logger.warning("No .bag files found in {}".format(self.input_folder))
                 return
 
-            # Start human detection node
-            if not self.start_human_detection_node():
-                self.logger.error("Failed to start human detection node")
-                return
+            self.logger.info("Found {} rosbag files to process".format(len(bag_files)))
 
-            # Wait for topics to be available
-            if not self.wait_for_topics():
-                self.logger.error("Topics not available")
-                return
-
+            # Process each rosbag file
             successful = 0
             failed = 0
 
-            # Process each bag file
-            for i, bag_file in enumerate(bag_files, 1):
-                bag_name = os.path.basename(bag_file)
-                self.logger.info("Processing bag {}/{}: {}".format(i, len(bag_files), bag_name))
-
+            for bag_file in bag_files:
                 if self.process_single_rosbag(bag_file):
                     successful += 1
                 else:
                     failed += 1
 
-                # Small delay between processing
-                if i < len(bag_files):
-                    time.sleep(1)
-
             self.logger.info("Processing complete. Successful: {}, Failed: {}".format(successful, failed))
 
-        except KeyboardInterrupt:
-            self.logger.info("Processing interrupted by user")
         except Exception as e:
-            self.logger.error("Unexpected error during processing: {}".format(e))
+            self.logger.error("Automation failed: {}".format(e))
+            raise
         finally:
-            self.cleanup_all_processes()
+            self.cleanup_processes()
 
 
 def main():
-    """Main function"""
-    parser = argparse.ArgumentParser(
-        description="Automate ROS bag processing with human detection node"
-    )
-
-    parser.add_argument(
-        "--input_folder",
-        required=True,
-        help="Path to folder containing input rosbag files"
-    )
-
-    parser.add_argument(
-        "--output_folder",
-        required=True,
-        help="Path to folder for output rosbag files"
-    )
-
-    parser.add_argument(
-        "--catkin_ws",
-        default="~/catkin_ws",
-        help="Path to catkin workspace (default: ~/catkin_ws)"
-    )
+    """Main entry point"""
+    parser = argparse.ArgumentParser(description='Automate rosbag processing with ROS nodes')
+    parser.add_argument('--input_folder', required=True, help='Path to input rosbag folder')
+    parser.add_argument('--output_folder', required=True, help='Path to output rosbag folder')
+    parser.add_argument('--catkin_ws', required=True, help='Path to catkin workspace')
+    parser.add_argument('--launch_package', default='vizzy', help='ROS package name')
+    parser.add_argument('--launch_file', default='human_detection.launch', help='Launch file name')
+    parser.add_argument('--startup_delay', type=float, default=3.0, help='Node startup delay in seconds')
+    parser.add_argument('--recording_delay', type=float, default=2.0, help='Recording startup delay in seconds')
 
     args = parser.parse_args()
 
-    # Expand user paths
-    input_folder = os.path.expanduser(args.input_folder)
-    output_folder = os.path.expanduser(args.output_folder)
-    catkin_ws = os.path.expanduser(args.catkin_ws)
+    # Create and run automation
+    automation = RosbagAutomation(
+        input_folder=args.input_folder,
+        output_folder=args.output_folder,
+        catkin_ws=args.catkin_ws,
+        launch_package=args.launch_package,
+        launch_file=args.launch_file,
+        startup_delay=args.startup_delay,
+        recording_delay=args.recording_delay
+    )
 
-    try:
-        automation = RosbagAutomation(input_folder, output_folder, catkin_ws)
-        automation.process_all_rosbags()
-    except Exception as e:
-        print("Error: {}".format(e))
-        sys.exit(1)
+    automation.run()
 
 
 if __name__ == "__main__":
