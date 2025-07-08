@@ -1,18 +1,8 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-ROS 1 Melodic Rosbag Automation Script (Python 2.7 Compatible)
-Processes rosbag files by playing them back with additional ROS nodes
-and recording all topics into new rosbag files.
-
-"""
-
 import os
 import sys
 import subprocess
 import time
 import signal
-import argparse
 import glob
 import logging
 from datetime import datetime
@@ -21,7 +11,7 @@ from datetime import datetime
 class RosbagAutomation:
     """Automates rosbag processing with ROS nodes"""
 
-    def __init__(self, input_folder,output_folder, catkin_ws,
+    def __init__(self, input_folder, output_folder, catkin_ws,
                  launch_package="vizzy", launch_file="human_detection.launch",
                  startup_delay=3.0, recording_delay=2.0):
         """
@@ -45,43 +35,102 @@ class RosbagAutomation:
         self.recording_delay = recording_delay
 
         # Process tracking
-        self.processes = []
         self.roscore_process = None
         self.node_process = None
         self.record_process = None
         self.play_process = None
 
-        # Setup logging
+        # Setup logging first
         self.setup_logging()
 
         # Validate paths
         self.validate_paths()
 
+        self.logger.info("RosbagAutomation initialized successfully")
+
+    def get_processing_status(self):
+        """Get the current processing status of files in input/output folders"""
+        # Get all input bag files
+        bag_pattern = os.path.join(self.input_folder, "*.bag")
+        input_files = glob.glob(bag_pattern)
+        input_files.sort()
+        
+        # Count processed files (those that exist in output folder)
+        processed_count = 0
+        for input_file in input_files:
+            bag_name = os.path.splitext(os.path.basename(input_file))[0]
+            output_file = os.path.join(self.output_folder, "{}_new.bag".format(bag_name))
+            if os.path.exists(output_file):
+                processed_count += 1
+        
+        return processed_count, len(input_files), input_files
+
+    def display_processing_status(self):
+        """Display current processing status"""
+        processed, total, files = self.get_processing_status()
+        
+        if total == 0:
+            self.logger.info("No .bag files found in input folder")
+            return
+        
+        self.logger.info("=" * 50)
+        self.logger.info("PROCESSING STATUS: {}/{} files completed ({:.1f}%)".format(
+            processed, total, (processed * 100.0) / total
+        ))
+        self.logger.info("=" * 50)
+        
+        # Show detailed status for each file
+        for i, input_file in enumerate(files, 1):
+            bag_name = os.path.splitext(os.path.basename(input_file))[0]
+            output_file = os.path.join(self.output_folder, "{}_new.bag".format(bag_name))
+            
+            if os.path.exists(output_file):
+                status = "✓ DONE"
+                # Get file size for additional info
+                try:
+                    size_mb = os.path.getsize(output_file) / (1024.0 * 1024.0)
+                    status += " ({:.1f} MB)".format(size_mb)
+                except:
+                    pass
+            else:
+                status = "⏳ PENDING"
+            
+            self.logger.info("{:2d}. {} - {}".format(i, bag_name, status))
+        
+        self.logger.info("=" * 50)
+
     def setup_logging(self):
         """Configure logging for the automation"""
+        # Create output folder if it doesn't exist (for log file)
+        if not os.path.exists(self.output_folder):
+            os.makedirs(self.output_folder)
+            
         log_file = os.path.join(self.output_folder, 'rosbag_automation.log')
+        
+        # Configure logging with both file and console output
         logging.basicConfig(
             level=logging.INFO,
             format='%(asctime)s - %(levelname)s - %(message)s',
             handlers=[
                 logging.FileHandler(log_file),
-                logging.StreamHandler()
+                logging.StreamHandler(sys.stdout)
             ]
         )
         self.logger = logging.getLogger(__name__)
 
     def validate_paths(self):
         """Validate that required paths exist"""
+        # Check input folder
         if not os.path.exists(self.input_folder):
-            raise FileNotFoundError("Input folder does not exist: {}".format(self.input_folder))
+            raise RuntimeError("Input folder does not exist: {}".format(self.input_folder))
 
+        # Check catkin workspace
         if not os.path.exists(self.catkin_ws):
-            raise FileNotFoundError("Catkin workspace does not exist: {}".format(self.catkin_ws))
+            raise RuntimeError("Catkin workspace does not exist: {}".format(self.catkin_ws))
 
         # Create output folder if it doesn't exist
         if not os.path.exists(self.output_folder):
             os.makedirs(self.output_folder)
-            self.logger.info("Created output folder: {}".format(self.output_folder))
 
         # Check launch file path
         launch_path = os.path.join(
@@ -93,13 +142,22 @@ class RosbagAutomation:
             self.launch_file
         )
         if not os.path.exists(launch_path):
-            raise FileNotFoundError("Launch file does not exist: {}".format(launch_path))
+            raise RuntimeError("Launch file does not exist: {}".format(launch_path))
 
     def signal_handler(self, signum, frame):
         """Handle interrupt signals gracefully"""
         self.logger.info("Received signal {}. Cleaning up...".format(signum))
         self.cleanup_processes()
         sys.exit(0)
+
+    def _wait_for_process_termination(self, process, timeout=5):
+        """Wait for process termination with timeout (Python 2.7 compatible)"""
+        start_time = time.time()
+        while time.time() - start_time < timeout:
+            if process.poll() is not None:
+                return True
+            time.sleep(0.1)
+        return False
 
     def cleanup_processes(self):
         """Clean up all running processes"""
@@ -115,17 +173,17 @@ class RosbagAutomation:
                 self.logger.info("Terminating {}...".format(name))
                 try:
                     process.terminate()
-                    process.wait(timeout=5)
-                except subprocess.TimeoutExpired:
-                    self.logger.warning("Force killing {}...".format(name))
-                    process.kill()
+                    if not self._wait_for_process_termination(process, 5):
+                        self.logger.warning("Force killing {}...".format(name))
+                        process.kill()
+                        self._wait_for_process_termination(process, 2)
                 except Exception as e:
                     self.logger.error("Error terminating {}: {}".format(name, e))
 
     def start_roscore(self):
         """Start roscore if not already running"""
+        # Check if roscore is already running
         try:
-            # Check if roscore is already running
             with open(os.devnull, 'w') as devnull:
                 result = subprocess.call(
                     ["rostopic", "list"], 
@@ -210,7 +268,10 @@ class RosbagAutomation:
         """Get list of currently active topics"""
         try:
             result = subprocess.check_output(["rostopic", "list"])
-            topics = result.decode().strip().split('\n')
+            # Python 2.7 compatible string handling
+            if isinstance(result, bytes):
+                result = result.decode('utf-8')
+            topics = result.strip().split('\n')
             self.logger.info("Found {} active topics".format(len(topics)))
             return topics
         except subprocess.CalledProcessError as e:
@@ -263,20 +324,24 @@ class RosbagAutomation:
             self.logger.info("Stopping recording...")
             self.record_process.send_signal(signal.SIGINT)
 
-            # Wait for graceful shutdown
-            try:
-                self.record_process.wait(timeout=10)
+            # Wait for graceful shutdown using helper method
+            if self._wait_for_process_termination(self.record_process, 10):
                 self.logger.info("Recording stopped successfully")
-            except subprocess.TimeoutExpired:
+            else:
                 self.logger.warning("Recording did not stop gracefully, force killing...")
                 self.record_process.kill()
+                self._wait_for_process_termination(self.record_process, 2)
 
-    def process_single_rosbag(self, input_bag_path):
-        """Process a single rosbag file"""
+    def process_single_rosbag(self, input_bag_path, current_index, total_files):
+        """Process a single rosbag file with progress tracking"""
         bag_name = os.path.splitext(os.path.basename(input_bag_path))[0]
-        output_bag_path = os.path.join(self.output_folder, "{}_new.bag".format(bag_name))
+        output_bag_path = os.path.join(self.output_folder, "{}_new".format(bag_name))
 
-        self.logger.info("Processing: {} -> {}".format(input_bag_path, output_bag_path))
+        self.logger.info("=" * 60)
+        self.logger.info("PROCESSING [{}/{}]: {}".format(current_index, total_files, bag_name))
+        self.logger.info("Input:  {}".format(input_bag_path))
+        self.logger.info("Output: {}.bag".format(output_bag_path))
+        self.logger.info("=" * 60)
 
         try:
             # Start recording
@@ -288,21 +353,39 @@ class RosbagAutomation:
             # Stop recording
             self.stop_recording()
 
-            # Verify output file was created
-            if os.path.exists(output_bag_path + ".bag"):
-                final_path = output_bag_path + ".bag"
-                self.logger.info("Successfully created: {}".format(final_path))
+            # Verify output file was created (rosbag record adds .bag extension)
+            expected_output = output_bag_path + ".bag"
+            if os.path.exists(expected_output):
+                # Get file size for logging
+                try:
+                    size_mb = os.path.getsize(expected_output) / (1024.0 * 1024.0)
+                    self.logger.info("✓ SUCCESS [{}/{}]: {} ({:.1f} MB)".format(
+                        current_index, total_files, bag_name, size_mb
+                    ))
+                except:
+                    self.logger.info("✓ SUCCESS [{}/{}]: {}".format(
+                        current_index, total_files, bag_name
+                    ))
                 return True
             else:
-                self.logger.error("Output file not found: {}".format(output_bag_path))
+                self.logger.error("✗ FAILED [{}/{}]: Output file not found - {}".format(
+                    current_index, total_files, bag_name
+                ))
                 return False
 
         except Exception as e:
-            self.logger.error("Error processing {}: {}".format(input_bag_path, e))
+            self.logger.error("✗ FAILED [{}/{}]: {} - Error: {}".format(
+                current_index, total_files, bag_name, e
+            ))
             return False
 
     def run(self):
         """Run the automation for all rosbag files"""
+        self.logger.info("Starting rosbag automation...")
+        
+        # Display initial processing status
+        self.display_processing_status()
+        
         # Setup signal handlers
         signal.signal(signal.SIGINT, self.signal_handler)
         signal.signal(signal.SIGTERM, self.signal_handler)
@@ -320,6 +403,9 @@ class RosbagAutomation:
             # Get list of rosbag files
             bag_pattern = os.path.join(self.input_folder, "*.bag")
             bag_files = glob.glob(bag_pattern)
+            
+            # Sort files for consistent processing order
+            bag_files.sort()
 
             if not bag_files:
                 self.logger.warning("No .bag files found in {}".format(self.input_folder))
@@ -327,17 +413,40 @@ class RosbagAutomation:
 
             self.logger.info("Found {} rosbag files to process".format(len(bag_files)))
 
-            # Process each rosbag file
+            # Filter out already processed files (optional - comment out if you want to reprocess)
+            unprocessed_files = []
+            for bag_file in bag_files:
+                bag_name = os.path.splitext(os.path.basename(bag_file))[0]
+                output_file = os.path.join(self.output_folder, "{}_new.bag".format(bag_name))
+                if not os.path.exists(output_file):
+                    unprocessed_files.append(bag_file)
+                else:
+                    self.logger.info("Skipping already processed: {}".format(bag_name))
+
+            if not unprocessed_files:
+                self.logger.info("All files have been processed already!")
+                return
+
+            self.logger.info("Processing {} unprocessed files...".format(len(unprocessed_files)))
+
+            # Process each unprocessed rosbag file
             successful = 0
             failed = 0
+            total_files = len(bag_files)
 
-            for bag_file in bag_files:
-                if self.process_single_rosbag(bag_file):
+            for i, bag_file in enumerate(unprocessed_files, 1):
+                # Calculate current index in the full list
+                current_index = bag_files.index(bag_file) + 1
+                
+                if self.process_single_rosbag(bag_file, current_index, total_files):
                     successful += 1
                 else:
                     failed += 1
 
             self.logger.info("Processing complete. Successful: {}, Failed: {}".format(successful, failed))
+            
+            # Display final status
+            self.display_processing_status()
 
         except Exception as e:
             self.logger.error("Automation failed: {}".format(e))
@@ -347,27 +456,31 @@ class RosbagAutomation:
 
 
 def main():
-    """Main entry point"""
-    parser = argparse.ArgumentParser(description='Automate rosbag processing with ROS nodes')
-    parser.add_argument('--input_folder', required=True, help='Path to input rosbag folder')
-    parser.add_argument('--output_folder', required=True, help='Path to output rosbag folder')
-    parser.add_argument('--catkin_ws', required=True, help='Path to catkin workspace')
-    parser.add_argument('--launch_package', default='vizzy', help='ROS package name')
-    parser.add_argument('--launch_file', default='human_detection.launch', help='Launch file name')
-    parser.add_argument('--startup_delay', type=float, default=3.0, help='Node startup delay in seconds')
-    parser.add_argument('--recording_delay', type=float, default=2.0, help='Recording startup delay in seconds')
-
-    args = parser.parse_args()
+    # Check if folder argument is provided
+    if len(sys.argv) != 2:
+        print("Usage: python rosbag_automation.py <folder>")
+        print("<folder> can be 'wild' or 'invited'")
+        sys.exit(1)
+    
+    flag_folder_input = sys.argv[1]
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    input_folder = os.path.join(current_dir, "input", flag_folder_input)
+    output_folder = os.path.join(current_dir, "output", flag_folder_input)
+    catkin_ws = "~/catkin_ws"
+    launch_package = "vizzy"
+    launch_file = "human_detection.launch"
+    startup_delay = 3.0
+    recording_delay = 2.0
 
     # Create and run automation
     automation = RosbagAutomation(
-        input_folder=args.input_folder,
-        output_folder=args.output_folder,
-        catkin_ws=args.catkin_ws,
-        launch_package=args.launch_package,
-        launch_file=args.launch_file,
-        startup_delay=args.startup_delay,
-        recording_delay=args.recording_delay
+        input_folder=input_folder,
+        output_folder=output_folder,
+        catkin_ws=catkin_ws,
+        launch_package=launch_package,
+        launch_file=launch_file,
+        startup_delay=startup_delay,
+        recording_delay=recording_delay
     )
 
     automation.run()
