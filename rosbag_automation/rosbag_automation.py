@@ -85,7 +85,7 @@ class RosbagAutomation:
             output_file = os.path.join(self.output_folder, "{}_new.bag".format(bag_name))
             
             if os.path.exists(output_file):
-                status = "✓ DONE"
+                status = "DONE"
                 # Get file size for additional info
                 try:
                     size_mb = os.path.getsize(output_file) / (1024.0 * 1024.0)
@@ -93,7 +93,7 @@ class RosbagAutomation:
                 except:
                     pass
             else:
-                status = "⏳ PENDING"
+                status = "PENDING"
             
             self.logger.info("{:2d}. {} - {}".format(i, bag_name, status))
         
@@ -180,9 +180,32 @@ class RosbagAutomation:
                 except Exception as e:
                     self.logger.error("Error terminating {}: {}".format(name, e))
 
+    def verify_ros_connectivity(self):
+        """Verify that ROS master is accessible"""
+        try:
+            with open(os.devnull, 'w') as devnull:
+                result = subprocess.call(
+                    ["rostopic", "list"],
+                    stdout=devnull,
+                    stderr=devnull
+                )
+            return result == 0
+        except:
+            return False
+
+    def cleanup_roslaunch_processes(self):
+        """Kill any lingering roslaunch processes that might interfere"""
+        try:
+            # Kill any roslaunch processes that might be running
+            subprocess.call(["pkill", "-f", "roslaunch.*{}".format(self.launch_file)], 
+                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            time.sleep(1.0)
+        except:
+            pass
+
     def start_roscore(self):
-        """Start roscore if not already running"""
-        # Check if roscore is already running
+        """Start rocore if not already running"""
+        # Check if rocore is already running
         try:
             with open(os.devnull, 'w') as devnull:
                 result = subprocess.call(
@@ -245,6 +268,17 @@ class RosbagAutomation:
 
         self.logger.info("Launching node from directory: {}".format(launch_dir))
 
+        # Verify ROS connectivity
+        if not self.verify_ros_connectivity():
+            raise RuntimeError("ROS master is not accessible. Cannot launch node.")
+
+        # Ensure any previous node is fully stopped
+        if self.node_process:
+            self.stop_node()
+        
+        # Clean up any lingering roslaunch processes
+        self.cleanup_roslaunch_processes()
+
         # Change to launch directory and run roslaunch
         self.node_process = subprocess.Popen(
             ["roslaunch", self.launch_file],
@@ -260,7 +294,9 @@ class RosbagAutomation:
         # Check if node is still running
         if self.node_process.poll() is not None:
             stdout, stderr = self.node_process.communicate()
-            raise RuntimeError("Node failed to start. Error: {}".format(stderr))
+            error_msg = "Node failed to start.\nSTDOUT: {}\nSTDERR: {}".format(stdout, stderr)
+            self.logger.error(error_msg)
+            raise RuntimeError(error_msg)
 
         self.logger.info("Node launched successfully")
 
@@ -318,6 +354,26 @@ class RosbagAutomation:
 
         self.logger.info("Rosbag playback completed")
 
+    def stop_node(self):
+        """Stop the ROS node"""
+        if self.node_process and self.node_process.poll() is None:
+            self.logger.info("Stopping ROS node...")
+            self.node_process.terminate()
+            
+            # Wait for graceful shutdown
+            if self._wait_for_process_termination(self.node_process, 10):
+                self.logger.info("ROS node stopped successfully")
+            else:
+                self.logger.warning("ROS node did not stop gracefully, force killing...")
+                self.node_process.kill()
+                self._wait_for_process_termination(self.node_process, 2)
+            
+            self.node_process = None
+            
+            # Add extra delay to ensure full cleanup
+            self.logger.info("Waiting for node cleanup...")
+            time.sleep(2.0)
+
     def stop_recording(self):
         """Stop the recording process"""
         if self.record_process and self.record_process.poll() is None:
@@ -344,6 +400,10 @@ class RosbagAutomation:
         self.logger.info("=" * 60)
 
         try:
+            # Launch fresh node for this file
+            self.logger.info("Starting fresh ROS node for this file...")
+            self.launch_node()
+
             # Start recording
             self.start_recording(output_bag_path)
 
@@ -353,30 +413,39 @@ class RosbagAutomation:
             # Stop recording
             self.stop_recording()
 
+            # Stop the node after processing this file
+            self.logger.info("Stopping ROS node to ensure clean state for next file...")
+            self.stop_node()
+
             # Verify output file was created (rosbag record adds .bag extension)
             expected_output = output_bag_path + ".bag"
             if os.path.exists(expected_output):
                 # Get file size for logging
                 try:
                     size_mb = os.path.getsize(expected_output) / (1024.0 * 1024.0)
-                    self.logger.info("✓ SUCCESS [{}/{}]: {} ({:.1f} MB)".format(
+                    self.logger.info("SUCCESS [{}/{}]: {} ({:.1f} MB)".format(
                         current_index, total_files, bag_name, size_mb
                     ))
                 except:
-                    self.logger.info("✓ SUCCESS [{}/{}]: {}".format(
+                    self.logger.info("SUCCESS [{}/{}]: {}".format(
                         current_index, total_files, bag_name
                     ))
                 return True
             else:
-                self.logger.error("✗ FAILED [{}/{}]: Output file not found - {}".format(
+                self.logger.error("FAILED [{}/{}]: Output file not found - {}".format(
                     current_index, total_files, bag_name
                 ))
                 return False
 
         except Exception as e:
-            self.logger.error("✗ FAILED [{}/{}]: {} - Error: {}".format(
+            self.logger.error("FAILED [{}/{}]: {} - Error: {}".format(
                 current_index, total_files, bag_name, e
             ))
+            # Make sure to stop the node even if processing failed
+            try:
+                self.stop_node()
+            except:
+                pass
             return False
 
     def run(self):
@@ -397,8 +466,7 @@ class RosbagAutomation:
             # Set simulation time
             self.set_sim_time()
 
-            # Launch node
-            self.launch_node()
+            # Note: Node will be launched fresh for each file in process_single_rosbag()
 
             # Get list of rosbag files
             bag_pattern = os.path.join(self.input_folder, "*.bag")
@@ -469,8 +537,8 @@ def main():
     catkin_ws = "~/catkin_ws"
     launch_package = "vizzy"
     launch_file = "human_detection.launch"
-    startup_delay = 3.0
-    recording_delay = 2.0
+    startup_delay = 6
+    recording_delay = 2
 
     # Create and run automation
     automation = RosbagAutomation(
