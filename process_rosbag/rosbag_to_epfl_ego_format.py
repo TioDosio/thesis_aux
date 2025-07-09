@@ -106,7 +106,7 @@ def extract_epfl_ego_data(bag_file, output_file):
             
             print("Found {} odom transforms".format(len(odom_transforms)))
             
-            # Second pass: process /raw_bodies messages
+            # Second pass: process /raw_bodies messages (one frame per message)
             print("Processing /raw_bodies messages...")
             frame_count = 0
             processed_count = 0
@@ -115,38 +115,64 @@ def extract_epfl_ego_data(bag_file, output_file):
                 for topic, msg, t in bag.read_messages(topics=['/raw_bodies']):
                     timestamp = t.to_sec()
                     
-                    # Process each pose in the PoseArray
-                    for pose in msg.poses:
-                        # Find the closest odom transform
-                        closest_odom = find_closest_odom_transform(timestamp, odom_transforms)
-                        
-                        if closest_odom:
-                            # Create EPFL ego format entry using OrderedDict for consistent ordering
-                            ego_entry = OrderedDict([
-                                ("frame", frame_count),
-                                ("coordinates", OrderedDict([
-                                    ("x", pose.position.x),
-                                    ("y", pose.position.y),
-                                    ("z", pose.position.z),
-                                    ("q1", closest_odom.transform.rotation.x),
-                                    ("q2", closest_odom.transform.rotation.y),
-                                    ("q3", closest_odom.transform.rotation.z),
-                                    ("q4", closest_odom.transform.rotation.w)
-                                ]))
-                            ])
-                            
-                            # Write JSON line with consistent ordering
-                            json_string = json.dumps(ego_entry, sort_keys=False)
-                            f.write(json_string + '\n')
-                            
-                            frame_count += 1
+                    # Find the closest odom transform for this message
+                    closest_odom = find_closest_odom_transform(timestamp, odom_transforms)
                     
+                    # Process this message (each message becomes one frame)
+                    if closest_odom:
+                        # If message has poses, use the first pose coordinates
+                        # If no poses, use zero coordinates but keep the orientation from odom
+                        x, y, z = 0.0, 0.0, 0.0
+                        if msg.poses:
+                            # Use the first pose in the message
+                            first_pose = msg.poses[0]
+                            x = first_pose.position.x
+                            y = first_pose.position.y
+                            z = first_pose.position.z
+                        
+                        ego_entry = OrderedDict([
+                            ("frame", frame_count),
+                            ("coordinates", OrderedDict([
+                                ("x", x),
+                                ("y", y),
+                                ("z", z),
+                                ("q1", closest_odom.transform.rotation.x),
+                                ("q2", closest_odom.transform.rotation.y),
+                                ("q3", closest_odom.transform.rotation.z),
+                                ("q4", closest_odom.transform.rotation.w)
+                            ]))
+                        ])
+                        
+                        # Write JSON line with consistent ordering
+                        json_string = json.dumps(ego_entry, sort_keys=False)
+                        f.write(json_string + '\n')
+                    else:
+                        # No odom transform found, but still create a frame entry with zero values
+                        ego_entry = OrderedDict([
+                            ("frame", frame_count),
+                            ("coordinates", OrderedDict([
+                                ("x", 0.0),
+                                ("y", 0.0),
+                                ("z", 0.0),
+                                ("q1", 0.0),
+                                ("q2", 0.0),
+                                ("q3", 0.0),
+                                ("q4", 1.0)  # Default quaternion
+                            ]))
+                        ])
+                        
+                        # Write JSON line with consistent ordering
+                        json_string = json.dumps(ego_entry, sort_keys=False)
+                        f.write(json_string + '\n')
+                    
+                    # Increment frame count once per message
+                    frame_count += 1
                     processed_count += 1
                     if processed_count % 100 == 0:
                         print("Processed {} /raw_bodies messages...".format(processed_count))
             
             print("Successfully processed {} /raw_bodies messages".format(processed_count))
-            print("Generated {} frames in EPFL ego format".format(frame_count))
+            print("Generated {} frames (one per message) in EPFL ego format".format(frame_count))
             print("Output saved to: {}".format(output_file))
             return True
             
