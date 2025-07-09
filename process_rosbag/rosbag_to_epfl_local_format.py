@@ -95,12 +95,13 @@ def extract_image_detections_data(messages):
         messages (list): List of message dictionaries from /image_detections topic
 
     Returns:
-        dict: Dictionary with sequence numbers as keys and detection data as values
+        list: List of detection data ordered by timestamp
     """
-    detections_data = {}
+    detections_data = []
     
     for msg_data in messages:
         msg = msg_data['msg']
+        timestamp = msg_data['timestamp']
         
         # Extract sequence number from header
         seq = msg.header.seq
@@ -125,7 +126,9 @@ def extract_image_detections_data(messages):
             
             persons.append(person_dict)
         
-        detections_data[seq] = {
+        detection_entry = {
+            'timestamp': timestamp.to_sec(),
+            'seq': seq,
             'header': {
                 'seq': seq,
                 'stamp': {
@@ -136,7 +139,11 @@ def extract_image_detections_data(messages):
             },
             'persons': persons
         }
+        
+        detections_data.append(detection_entry)
     
+    # Sort by timestamp to ensure consistent ordering
+    detections_data.sort(key=lambda x: x['timestamp'])
     return detections_data
 
 
@@ -148,12 +155,13 @@ def extract_raw_bodies_data(messages):
         messages (list): List of message dictionaries from /raw_bodies topic
 
     Returns:
-        dict: Dictionary with sequence numbers as keys and pose data as values
+        list: List of pose data ordered by timestamp
     """
-    bodies_data = {}
+    bodies_data = []
     
     for msg_data in messages:
         msg = msg_data['msg']
+        timestamp = msg_data['timestamp']
         
         # Extract sequence number from header
         seq = msg.header.seq
@@ -174,9 +182,11 @@ def extract_raw_bodies_data(messages):
                     'w': pose.orientation.w
                 }
             }
-            poses.append(pose_dict)
+            poses.append(pose_dict) 
         
-        bodies_data[seq] = {
+        body_entry = {
+            'timestamp': timestamp.to_sec(),
+            'seq': seq,
             'header': {
                 'seq': seq,
                 'stamp': {
@@ -187,57 +197,12 @@ def extract_raw_bodies_data(messages):
             },
             'poses': poses
         }
-    
-    return bodies_data
-
-
-def extract_tf_data(messages):
-    """
-    Extract transform data from /tf messages.
-
-    Args:
-        messages (list): List of message dictionaries from /tf topic
-
-    Returns:
-        dict: Dictionary with timestamps as keys and transform data as values
-    """
-    tf_data = {}
-    
-    for msg_data in messages:
-        msg = msg_data['msg']
-        timestamp = msg_data['timestamp']
         
-        # Process all transforms in the message
-        for transform in msg.transforms:
-            tf_dict = {
-                'header': {
-                    'seq': transform.header.seq,
-                    'stamp': {
-                        'secs': transform.header.stamp.secs,
-                        'nsecs': transform.header.stamp.nsecs
-                    },
-                    'frame_id': transform.header.frame_id
-                },
-                'child_frame_id': transform.child_frame_id,
-                'transform': {
-                    'translation': {
-                        'x': transform.transform.translation.x,
-                        'y': transform.transform.translation.y,
-                        'z': transform.transform.translation.z
-                    },
-                    'rotation': {
-                        'x': transform.transform.rotation.x,
-                        'y': transform.transform.rotation.y,
-                        'z': transform.transform.rotation.z,
-                        'w': transform.transform.rotation.w
-                    }
-                }
-            }
-            
-            # Use timestamp as key for tf data
-            tf_data[timestamp] = tf_dict
+        bodies_data.append(body_entry)
     
-    return tf_data
+    # Sort by timestamp to ensure consistent ordering
+    bodies_data.sort(key=lambda x: x['timestamp'])
+    return bodies_data
 
 
 def parse_yaml_file(filename):
@@ -314,23 +279,34 @@ def compute_bbox(keypoints):
     return [x_min, y_min, x_max, y_max]
 
 
-def extract_poses(seq, bodies_data):
+def extract_poses(timestamp, bodies_data):
     """
-    Extract pose information for a specific sequence number from processed data.
+    Extract pose information for a specific timestamp from processed data.
 
     This function searches through the processed bodies data to find the pose data
-    corresponding to a specific sequence number (frame).
+    corresponding to a specific timestamp.
 
     Args:
-        seq (int): Sequence number (frame number) to search for
-        bodies_data (dict): Dictionary containing processed raw_bodies data
+        timestamp (float): Timestamp to search for
+        bodies_data (list): List containing processed raw_bodies data
 
     Returns:
         list: List of pose dictionaries, each containing 'position' and 'orientation'
-              Returns empty list if sequence not found
+              Returns empty list if timestamp not found
     """
-    if seq in bodies_data:
-        return bodies_data[seq]['poses']
+    # Find the closest body data by timestamp
+    closest_body = None
+    min_time_diff = float('inf')
+    
+    for body_entry in bodies_data:
+        time_diff = abs(body_entry['timestamp'] - timestamp)
+        if time_diff < min_time_diff:
+            min_time_diff = time_diff
+            closest_body = body_entry
+    
+    if closest_body:
+        return closest_body['poses']
+    
     return []
 
 
@@ -340,13 +316,14 @@ def process_rosbag_data(bag_file, output_file):
 
     This function reads the bag file, processes the data frame by frame,
     and outputs the combined result in JSON format following the EPFL structure.
+    Each /image_detections message becomes one frame.
 
     Args:
         bag_file (str): Path to the .bag file to process
         output_file (str): Path for the output JSON file
     """
     # Define the topics to read
-    topics_to_read = ['/image_detections', '/raw_bodies', '/tf']
+    topics_to_read = ['/image_detections', '/raw_bodies']
     
     print("Processing bag file: {}".format(bag_file))
     print("Topics to read: {}".format(topics_to_read))
@@ -354,71 +331,56 @@ def process_rosbag_data(bag_file, output_file):
     # Read data from bag file
     topic_data = read_rosbag_topics(bag_file, topics_to_read)
     
-    # Extract structured data from each topic
+    # Extract structured data from each topic (now returns lists sorted by timestamp)
     detections_data = extract_image_detections_data(topic_data.get('/image_detections', []))
     bodies_data = extract_raw_bodies_data(topic_data.get('/raw_bodies', []))
-    tf_data = extract_tf_data(topic_data.get('/tf', []))
     
-    print("Extracted {} detection frames".format(len(detections_data)))
-    print("Extracted {} body frames".format(len(bodies_data)))
-    print("Extracted {} tf transforms".format(len(tf_data)))
-    
-    # Use defaultdict to group data by frame sequence number
-    frame_data = defaultdict(list)
-    
-    # Process all detection frames
-    for seq, detection in detections_data.items():
-        persons = detection.get('persons', [])
-        
-        if persons:  # Only process if there are persons detected
-            print("Processing frame {} with {} person(s)".format(seq, len(persons)))
-            
-            # Get poses for this frame
-            poses_result = extract_poses(seq, bodies_data)
-            
-            # Process each person in this frame
-            for person_idx, person in enumerate(persons):
-                # Extract keypoints in the correct order
-                keypoints = extract_keypoints(person)
-                
-                # Compute bounding box from keypoints
-                bbox = compute_bbox(keypoints)
-                
-                # Extract position coordinates from corresponding pose if available
-                x, y, z = 0.0, 0.0, 0.0
-                if poses_result and person_idx < len(poses_result):
-                    position = poses_result[person_idx].get('position', {})
-                    x = position.get('x', 0.0)
-                    y = position.get('y', 0.0)
-                    z = position.get('z', 0.0)
-                
-                # Create coordinate entry for this person
-                coordinate_entry = OrderedDict([
-                    ("id", person_idx + 1),  # Person ID starting from 1
-                    ("x", x),
-                    ("y", z),   # y is the height coordinate in EPFL format
-                    ("z", y),
-                    ("bbox", bbox),
-                    ("keypoints", keypoints)
-                ])
-                
-                frame_data[seq].append(coordinate_entry)
-        else:
-            # Frame exists but no persons detected - ensure frame is included with empty coordinates
-            print("Frame {}: No persons detected".format(seq))
-            frame_data[seq] = []
-    
-    # Write output in EPFL format
-    print("Writing output to: {}".format(output_file))
     
     try:
         with open(output_file, 'w') as out_f:
-            for frame_number in sorted(frame_data.keys()):
-                coordinates = frame_data[frame_number]
+            # Process each detection message as a separate frame
+            for frame_idx, detection in enumerate(detections_data):
+                coordinates = []
                 
-                # Create frame entry following EPFL format
+                persons = detection.get('persons', [])
+                detection_timestamp = detection['timestamp']
+                
+                if persons:
+                    
+                    # Get poses for this frame (find closest by timestamp)
+                    poses_result = extract_poses(detection_timestamp, bodies_data)
+                    
+                    # Process each person in this frame
+                    for person_idx, person in enumerate(persons):
+                        # Extract keypoints in the correct order
+                        keypoints = extract_keypoints(person)
+                        
+                        # Compute bounding box from keypoints
+                        bbox = compute_bbox(keypoints)
+                        
+                        # Extract position coordinates from corresponding pose if available
+                        x, y, z = 0.0, 0.0, 0.0
+                        if poses_result and person_idx < len(poses_result):
+                            position = poses_result[person_idx].get('position', {})
+                            x = position.get('x', 0.0)
+                            y = position.get('y', 0.0)
+                            z = position.get('z', 0.0)
+                        
+                        # Create coordinate entry for this person
+                        coordinate_entry = OrderedDict([
+                            ("id", person_idx + 1),  # Person ID starting from 1
+                            ("x", x),
+                            ("y", z),   # y is the height coordinate in EPFL format
+                            ("z", y),
+                            ("bbox", bbox),
+                            ("keypoints", keypoints)
+                        ])
+                        
+                        coordinates.append(coordinate_entry)
+                
+                # Create frame entry following EPFL format (frame number starts from 0)
                 frame_entry = OrderedDict([
-                    ("frame", frame_number),
+                    ("frame", frame_idx),
                     ("coordinates", coordinates)
                 ])
                 
@@ -426,7 +388,7 @@ def process_rosbag_data(bag_file, output_file):
                 json_string = json.dumps(frame_entry, sort_keys=False)
                 out_f.write(json_string + '\n')
         
-        print("Successfully processed {} frames".format(len(frame_data)))
+        print("Successfully processed {} frames".format(len(detections_data)))
         print("Output saved to: {}".format(output_file))
         
     except IOError as e:
