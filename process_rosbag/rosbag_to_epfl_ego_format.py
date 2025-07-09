@@ -134,8 +134,8 @@ def extract_epfl_ego_data(bag_file, output_file):
                             ("frame", frame_count),
                             ("coordinates", OrderedDict([
                                 ("x", x),
-                                ("y", y),
-                                ("z", z),
+                                ("y", z), # EPFL ego format where y is the height
+                                ("z", y),
                                 ("q1", closest_odom.transform.rotation.x),
                                 ("q2", closest_odom.transform.rotation.y),
                                 ("q3", closest_odom.transform.rotation.z),
