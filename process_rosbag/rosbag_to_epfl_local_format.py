@@ -3,6 +3,7 @@ import json
 import os
 import glob
 import sys
+import argparse
 from collections import OrderedDict, defaultdict
 
 # Try to import rosbag, provide helpful error message if not available
@@ -497,30 +498,52 @@ def process_bag_folder(folder_path, output_folder):
             print("  {}. {} - {}".format(i, filename, error))
 
 
-def main():
-    if len(sys.argv) < 2:
-        print("Usage: python rosbag_to_epflFormat.py <folder>")
-        print("<folder> - 'wild' or 'invited'")
-        sys.exit(1)
+def parse_arguments():
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(
+        description="Create EPFL local format JSON from ROS bag files using /image_detections, /raw_bodies and /tf topics"
+    )
+    parser.add_argument(
+        "--input", "-i",
+        type=str,
+        required=True,
+        help="Input directory containing .bag files"
+    )
+    parser.add_argument(
+        "--output", "-o",
+        type=str,
+        required=True,
+        help="Output directory for EPFL local format JSON files"
+    )
     
-    # Get arguments
-    bag_folder = "../rosbag_automation/output/{}".format(sys.argv[1])
-    output_folder = "../preprocessing_files/{}".format(sys.argv[1])
+    return parser.parse_args()
 
+
+def main():
+    """Main function to process all .bag files in a folder."""
+    args = parse_arguments()
+    
+    input_folder = os.path.abspath(args.input)
+    output_folder = os.path.abspath(args.output)
+    
     # Validate input folder
-    if not os.path.exists(bag_folder):
-        print("Error: Bag folder does not exist: {}".format(bag_folder))
+    if not os.path.exists(input_folder):
+        print("Error: Input folder '{}' does not exist.".format(input_folder))
+        sys.exit(1)
+    
+    if not os.path.isdir(input_folder):
+        print("Error: '{}' is not a directory.".format(input_folder))
         sys.exit(1)
     
     print("=" * 60)
-    print("ROS Bag Data Preprocessing Script")
+    print("ROS Bag to EPFL Local Format Converter")
     print("=" * 60)
-    print("Input folder: {}".format(bag_folder))
+    print("Input folder: {}".format(input_folder))
     print("Output folder: {}".format(output_folder))
     print("=" * 60)
     
     # Process all bag files in the folder
-    process_bag_folder(bag_folder, output_folder)
+    process_bag_folder(input_folder, output_folder)
     
     print("=" * 60)
     print("Processing complete!")
