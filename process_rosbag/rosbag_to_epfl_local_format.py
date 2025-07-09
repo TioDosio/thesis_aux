@@ -427,7 +427,7 @@ def process_bag_folder(folder_path, output_folder):
     
     for i, bag_file in enumerate(bag_files, 1):
         bag_name = os.path.splitext(os.path.basename(bag_file))[0]
-        output_file = os.path.join(output_folder, "{}_keypoints.json".format(bag_name))
+        output_file = os.path.join(output_folder, "{}_local_coordinates.json".format(bag_name))
         
         print("\n[{}/{}] Processing: {}".format(i, len(bag_files), bag_name))
         print("=" * 60)

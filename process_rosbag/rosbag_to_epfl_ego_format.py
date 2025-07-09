@@ -211,7 +211,7 @@ def process_bag_folder(input_folder, output_folder):
     
     for i, bag_file in enumerate(bag_files, 1):
         bag_name = os.path.splitext(os.path.basename(bag_file))[0]
-        output_file = os.path.join(output_folder, "{}_epfl_ego.json".format(bag_name))
+        output_file = os.path.join(output_folder, "{}_ego_coordinates.json".format(bag_name))
         
         print("\n[{}/{}] Processing: {}".format(i, len(bag_files), bag_name))
         print("=" * 60)
