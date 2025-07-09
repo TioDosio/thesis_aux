@@ -396,8 +396,8 @@ def process_rosbag_data(bag_file, output_file):
                 coordinate_entry = OrderedDict([
                     ("id", person_idx + 1),  # Person ID starting from 1
                     ("x", x),
-                    ("y", y),
-                    ("z", z),
+                    ("y", z),   # y is the height coordinate in EPFL format
+                    ("z", y),
                     ("bbox", bbox),
                     ("keypoints", keypoints)
                 ])
