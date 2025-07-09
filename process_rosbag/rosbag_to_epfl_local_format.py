@@ -367,8 +367,10 @@ def process_rosbag_data(bag_file, output_file):
                             z = position.get('z', 0.0)
                         
                         # Create coordinate entry for this person
+                        # Assign ID in reverse order: if 4 persons, IDs are 4, 3, 2, 1
+                        person_id = len(persons) - person_idx
                         coordinate_entry = OrderedDict([
-                            ("id", person_idx + 1),  # Person ID starting from 1
+                            ("id", person_id),
                             ("x", x),
                             ("y", z),   # y is the height coordinate in EPFL format
                             ("z", y),
