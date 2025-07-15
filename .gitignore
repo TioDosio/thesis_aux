@@ -5,3 +5,4 @@
 *.zip
 *.log
 *.pyc
+model/code/data/__pycache__/*.pyc
