@@ -4,3 +4,4 @@
 *.bag.active
 *.zip
 *.log
+*.pyc
