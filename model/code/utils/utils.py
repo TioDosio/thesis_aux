@@ -90,8 +90,19 @@ def create_dataset(joints_folder):
     dic_jo = {'train':{'X':[], 'Y':[], 'names':[], 'kps':[], 'boxes_3d':[], 'boxes_2d':[], 'K':[], 'ego_pose':[], 'camera_pose':[], 'traj_3d_ego':[], 'image_path':[], 'traj_3d_fcos3d':[]}, \
               'test':{'X':[], 'Y':[], 'names':[], 'kps':[], 'boxes_3d':[], 'boxes_2d':[], 'K':[], 'ego_pose':[], 'camera_pose':[], 'traj_3d_ego':[],  'image_path':[], 'traj_3d_fcos3d':[]}}
     
+    # Check if joints_folder is empty or doesn't exist (for real-time mode)
+    if not joints_folder or not os.path.exists(joints_folder):
+        print("Warning: No joints folder provided or doesn't exist. Running in real-time mode with empty dataset.")
+        return dic_jo
+    
     for split in ['train', 'test']:
         path = os.path.join(joints_folder, split)
+        
+        # Check if split directory exists
+        if not os.path.exists(path):
+            print("Warning: {} folder not found at {}. Skipping.".format(split, path))
+            continue
+            
         list_files = os.listdir(path)
         for file in list_files:
             with open(os.path.join(path, file), 'r') as f:
