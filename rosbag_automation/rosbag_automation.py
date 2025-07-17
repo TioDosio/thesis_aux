@@ -524,21 +524,44 @@ class RosbagAutomation:
 
 
 def main():
-    # Check if folder argument is provided
-    if len(sys.argv) != 2:
-        print("Usage: python rosbag_automation.py <folder>")
-        print("<folder> can be 'wild' or 'invited'")
+    # Check if required arguments are provided
+    if len(sys.argv) != 3:
+        print("Usage: python rosbag_automation.py <input_folder> <output_folder>")
+        print("Arguments:")
+        print("  <input_folder>  : Path to folder containing input rosbag files")
+        print("  <output_folder> : Path to folder for output rosbag files")
+        print("")
+        print("Examples:")
+        print("  python rosbag_automation.py /path/to/input/bags /path/to/output/bags")
+        print("  python rosbag_automation.py ./input/invited ./output/invited")
+        print("  python rosbag_automation.py input/wild output/wild")
         sys.exit(1)
     
-    flag_folder_input = sys.argv[1]
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    input_folder = os.path.join(current_dir, "input", flag_folder_input)
-    output_folder = os.path.join(current_dir, "output", flag_folder_input)
+    input_folder = sys.argv[1]
+    output_folder = sys.argv[2]
+    
+    # Convert relative paths to absolute paths
+    if not os.path.isabs(input_folder):
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        input_folder = os.path.join(current_dir, input_folder)
+    
+    if not os.path.isabs(output_folder):
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        output_folder = os.path.join(current_dir, output_folder)
+    
     catkin_ws = "~/catkin_ws"
     launch_package = "vizzy"
     launch_file = "human_detection.launch"
     startup_delay = 6
     recording_delay = 2
+
+    print("Configuration:")
+    print("  Input folder:  {}".format(input_folder))
+    print("  Output folder: {}".format(output_folder))
+    print("  Catkin workspace: {}".format(catkin_ws))
+    print("  Launch package: {}".format(launch_package))
+    print("  Launch file: {}".format(launch_file))
+    print("")
 
     # Create and run automation
     automation = RosbagAutomation(
