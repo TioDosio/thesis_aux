@@ -8,6 +8,6 @@
 #   From /tf use the last message with frame_id=/odom before the frame, use the time from the topics for it
 # 2.3 Compile the frames in the especifies strutures
 # 3 - Do the summarize_data.py 
-# 4 - create the input for the model with a certain number of frames, but make the number a parameter i can change later.
+# 4 - create the input for the model with a certain number of frames.
 # 5 - run the model with the input
 # 6 - publish the output of the model as positions as a ros topic, and visualize it in rviz
