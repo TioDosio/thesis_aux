@@ -7,6 +7,29 @@ import torch.nn.functional as F
 from PIL import Image
 
 
+def preprocess_monoloco(keypoints, kk, zero_center=False):
+
+    """ Preprocess batches of inputs
+    keypoints = torch tensors of (m, 3, 17)  or list [3,17]
+    Outputs =  torch tensors of (m, 34) in meters normalized (z=1) and zero-centered using the center of the box
+    """
+    if isinstance(keypoints, list):
+        keypoints = torch.tensor(keypoints)
+    if isinstance(kk, list):
+        kk = torch.tensor(kk)
+    # Projection in normalized image coordinates and zero-center with the center of the bounding box
+    uv_center = get_keypoints(keypoints, mode='center')
+    xy1_center = pixel_to_camera(uv_center, kk, 10)
+    xy1_all = pixel_to_camera(keypoints[:, 0:2, :], kk, 10) 
+    if zero_center:
+        kps_norm = xy1_all - xy1_center.unsqueeze(1)  # (m, 17, 3) - (m, 1, 3)
+    else:
+        kps_norm = xy1_all
+    kps_out = kps_norm[:, :, 0:2].reshape(kps_norm.size()[0], -1)  # no contiguous for view
+    # kps_out = torch.cat((kps_out, keypoints[:, 2, :]), dim=1)
+    return kps_out
+
+
 def pixel_to_camera(uv_tensor, kk, z_met):
     """
     Convert a tensor in pixel coordinate to absolute camera coordinates
@@ -23,6 +46,7 @@ def pixel_to_camera(uv_tensor, kk, z_met):
     uv_padded = F.pad(uv_tensor, pad=(0, 1), mode="constant", value=1)  # pad only last-dim below with value 1
 
     kk_1 = torch.inverse(kk)
+    uv_padded = uv_padded.to(torch.float32)
     xyz_met_norm = torch.matmul(uv_padded, kk_1.t())  # More general than torch.mm
     xyz_met = xyz_met_norm * z_met
 
@@ -43,8 +67,8 @@ def project_3d(box_obj, kk):
     """
     box_2d = []
     # Obtain the 3d points of the box
-    xc, yc, zc = box_obj.center
-    ww, _, hh, = box_obj.wlh
+    xc, yc, zc = box_obj[0], box_obj[1], box_obj[2]
+    ww, _, hh, = box_obj[3], box_obj[4], box_obj[5]
 
     # Points corresponding to a box at the z of the center
     x1 = xc - ww/2
@@ -76,7 +100,8 @@ def get_keypoints(keypoints, mode):
         keypoints = torch.tensor(keypoints)
     if len(keypoints.size()) == 2:  # add batch dim
         keypoints = keypoints.unsqueeze(0)
-    assert len(keypoints.size()) == 3 and keypoints.size()[1] == 3, "tensor dimensions not recognized"
+    assert len(keypoints.size()) == 3 and keypoints.size()[1] == 2, "tensor dimensions not recognized"
+
     assert mode in ['center', 'bottom', 'head', 'shoulder', 'hip', 'ankle']
 
     kps_in = keypoints[:, 0:2, :]  # (m, 2, 17)
@@ -245,15 +270,4 @@ def to_cartesian(rtp, mode=None):
     x = rtp[0] * math.sin(rtp[2]) * math.cos(rtp[1])
     y = rtp[0] * math.cos(rtp[2])
     z = rtp[0] * math.sin(rtp[2]) * math.sin(rtp[1])
-
-    # check nan
-    if math.isnan(x) or math.isnan(y) or math.isnan(z):
-        print(f"x = {x}")
-        print(f"y = {y}")
-        print(f"z = {z}")
-        breakpoint()
-
     return[x, y, z]
-
-
-
