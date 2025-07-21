@@ -12,13 +12,10 @@ import time
 import math
 from collections import deque, defaultdict
 from pyquaternion import Quaternion
-
-# Try to import model utilities
 try:
     from pytorch3d.transforms import quaternion_to_matrix
     PYTORCH3D_AVAILABLE = True
 except ImportError:
-    print("pytorch3d not available, using manual quaternion to matrix conversion")
     PYTORCH3D_AVAILABLE = False
 
 # Camera intrinsic matrix (Vizzy robot camera)
