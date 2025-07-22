@@ -312,12 +312,6 @@ class RealTimeTrajectoryPredictor:
             rospy.logwarn("Transform combination traceback: {}".format(traceback.format_exc()))
             return None
 
-    def get_current_reference_frame(self):
-        """Get the current reference frame (combined map->base_footprint transform)"""
-        if self.latest_map_odom_frame and self.latest_odom_base_frame:
-            return self.combine_transforms(self.latest_map_odom_frame, self.latest_odom_base_frame)
-        return None
-
     def image_detections_callback(self, msg):
         """Process person detections from /image_detections topic"""        
         
@@ -449,90 +443,6 @@ class RealTimeTrajectoryPredictor:
         
         if predictions:
             self.publish_predictions(predictions, current_time)
-
-    def prepare_model_input(self, person_id, person_history):
-        """Prepare data in the format expected by MonoTransmotion model"""
-        try:
-            # Get the most recent sequence
-            recent_data = list(person_history)[-self.seq_len * self.interval:]
-            recent_ego = list(self.ego_poses)[-self.seq_len * self.interval:]
-            
-            if len(recent_data) < self.seq_len * self.interval or len(recent_ego) < self.seq_len * self.interval:
-                return None
-            
-            # Sample at intervals to get seq_len frames
-            sampled_data = recent_data[::self.interval][:self.seq_len]
-            sampled_ego = recent_ego[::self.interval][:self.seq_len]
-            
-            if len(sampled_data) < self.seq_len or len(sampled_ego) < self.seq_len:
-                return None
-            
-            # Prepare model input tensors
-            X = []  # 2D coordinates  
-            kps = []  # Keypoints
-            ego_pose = []  # Ego poses
-            boxes_2d = []  # 2D bounding boxes
-            boxes_3d = []  # 3D positions
-            
-            for i, (ped_data, ego_data) in enumerate(zip(sampled_data, sampled_ego)):
-                # 2D position (from keypoints center)
-                if 'keypoints' in ped_data and ped_data['keypoints']:
-                    # Calculate center from keypoints
-                    kps_array = np.array(ped_data['keypoints']).reshape(-1, 3)
-                    valid_kps = kps_array[kps_array[:, 2] > 0]
-                    if len(valid_kps) > 0:
-                        x_2d = np.mean(valid_kps[:, 0])
-                        y_2d = np.mean(valid_kps[:, 1])
-                    else:
-                        x_2d, y_2d = 320.0, 240.0  # Image center default
-                else:
-                    x_2d, y_2d = 320.0, 240.0
-                
-                X.append([x_2d, y_2d])
-                
-                # Keypoints (convert from [x,y,conf] format to just [x,y] format)
-                if 'keypoints' in ped_data:
-                    kps_data = ped_data['keypoints']
-                    
-                    # Convert from flat [x,y,conf,x,y,conf,...] to [[x,y],[x,y],...] format
-                    if len(kps_data) == 51:  # 17 keypoints * 3 values
-                        kps_xy = []
-                        for j in range(0, len(kps_data), 3):
-                            kps_xy.extend([kps_data[j], kps_data[j+1]])  # x, y only
-                        kps.append(kps_xy)  # 34 values (17 keypoints * 2)
-                    else:
-                        kps.append([0.0] * 34)  # 17 keypoints * 2 values
-                else:
-                    kps.append([0.0] * 34)  # 17 keypoints * 2 values
-                
-                # Ego pose [q1, q2, q3, q4, x, y, z]
-                ego_pose.append([
-                    ego_data['q1'], ego_data['q2'], ego_data['q3'], ego_data['q4'],
-                    ego_data['x'], ego_data['y'], ego_data['z']
-                ])
-                
-                # 2D bounding box
-                if 'bbox' in ped_data:
-                    boxes_2d.append(ped_data['bbox'])
-                else:
-                    boxes_2d.append([x_2d-50, y_2d-100, x_2d+50, y_2d+100])
-                
-                # 3D position
-                boxes_3d.append([ped_data['x'], ped_data['y'], ped_data['z']])
-            
-            model_input = {
-                'X': torch.tensor(X, dtype=torch.float32).unsqueeze(0),  # [1, seq_len, 2]
-                'kps': torch.tensor(kps, dtype=torch.float32).unsqueeze(0),  # [1, seq_len, 34]
-                'ego_pose': torch.tensor(ego_pose, dtype=torch.float32).unsqueeze(0),  # [1, seq_len, 7]
-                'boxes_2d': torch.tensor(boxes_2d, dtype=torch.float32).unsqueeze(0),  # [1, seq_len, 4]
-                'boxes_3d': torch.tensor(boxes_3d, dtype=torch.float32).unsqueeze(0),  # [1, seq_len, 3]
-            }
-            
-            return model_input
-            
-        except Exception as e:
-            rospy.logwarn("Failed to prepare model input: {}".format(e))
-            return None
 
     def predict_single_trajectory(self, model_input):
         """Use the model to predict a single trajectory"""
@@ -689,7 +599,6 @@ class RealTimeTrajectoryPredictor:
                 pose_stamped.pose.position.x = pos['x']
                 pose_stamped.pose.position.y = pos['y']
                 pose_stamped.pose.position.z = pos['z'] if pos['z'] != 0.0 else 0.02  # Slightly above ground
-                print("positions x,y,z:", pos['x'], pos['y'], pos['z'])
                 pose_stamped.pose.orientation.w = 1.0
                 path_msg.poses.append(pose_stamped)
             

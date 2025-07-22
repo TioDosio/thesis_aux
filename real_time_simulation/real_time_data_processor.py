@@ -54,38 +54,6 @@ def quaternion_yaw(q, in_image_frame=True):
     return float(yaw)
 
 
-def quaternion_to_matrix_manual(quaternions):
-    """Manual quaternion to rotation matrix conversion if pytorch3d not available"""
-    if PYTORCH3D_AVAILABLE:
-        return quaternion_to_matrix(quaternions)
-    
-    # Manual implementation for [w, x, y, z] format
-    w, x, y, z = quaternions[..., 0], quaternions[..., 1], quaternions[..., 2], quaternions[..., 3]
-    
-    # Normalize quaternions
-    norm = torch.sqrt(w*w + x*x + y*y + z*z)
-    w, x, y, z = w/norm, x/norm, y/norm, z/norm
-    
-    # Compute rotation matrix elements
-    xx, yy, zz = x*x, y*y, z*z
-    xy, xz, yz = x*y, x*z, y*z
-    wx, wy, wz = w*x, w*y, w*z
-    
-    # Build rotation matrix
-    R = torch.zeros((*quaternions.shape[:-1], 3, 3), dtype=quaternions.dtype, device=quaternions.device)
-    R[..., 0, 0] = 1 - 2*(yy + zz)
-    R[..., 0, 1] = 2*(xy - wz)
-    R[..., 0, 2] = 2*(xz + wy)
-    R[..., 1, 0] = 2*(xy + wz)
-    R[..., 1, 1] = 1 - 2*(xx + zz)
-    R[..., 1, 2] = 2*(yz - wx)
-    R[..., 2, 0] = 2*(xz - wy)
-    R[..., 2, 1] = 2*(yz + wx)
-    R[..., 2, 2] = 1 - 2*(xx + yy)
-    
-    return R
-
-
 def local2global(traj_estimated, ego_pose):
     """Transform local coordinates to global coordinates"""
     # Ego translation
