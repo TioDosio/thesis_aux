@@ -116,7 +116,7 @@ def local2global(traj_estimated, ego_pose):
 
 def extract_keypoints_from_person_dict(person_dict):
     """Extract keypoints from person dictionary in correct order"""
-    print(f"DEBUG: Extracting keypoints from person_dict with keys: {list(person_dict.keys())}")
+    #print(f"DEBUG: Extracting keypoints from person_dict with keys: {list(person_dict.keys())}")
     
     # Create mapping from part_id to coordinates
     part_map = {}
@@ -124,7 +124,7 @@ def extract_keypoints_from_person_dict(person_dict):
     # From the examples in image_detections.txt, the keypoints are stored as:
     # body_parts with part_id as string names like "Nose", "RShoulder", etc.
     body_parts = person_dict.get('body_parts', [])
-    print(f"DEBUG: Found {len(body_parts)} body parts")
+    #print(f"DEBUG: Found {len(body_parts)} body parts")
     
     for body_part in body_parts:
         part_id = body_part['part_id']  # This is a string like "Nose", "RShoulder"
@@ -133,9 +133,9 @@ def extract_keypoints_from_person_dict(person_dict):
             float(body_part['y']), 
             float(body_part['confidence'])
         ]
-        print(f"  {part_id}: ({body_part['x']}, {body_part['y']}, conf={body_part['confidence']:.3f})")
+        #print(f"  {part_id}: ({body_part['x']}, {body_part['y']}, conf={body_part['confidence']:.3f})")
     
-    print(f"DEBUG: Mapped {len(part_map)} keypoints: {list(part_map.keys())}")
+    #print(f"DEBUG: Mapped {len(part_map)} keypoints: {list(part_map.keys())}")
     
     # Map from the message format to our expected format
     # The message format uses different names than our CORRECT_ORDER
@@ -167,7 +167,7 @@ def extract_keypoints_from_person_dict(person_dict):
         else:
             keypoints.extend([0.0, 0.0, 0.0])
     
-    print(f"DEBUG: Final keypoints array length: {len(keypoints)} (expected {len(CORRECT_ORDER)*3})")
+    #print(f"DEBUG: Final keypoints array length: {len(keypoints)} (expected {len(CORRECT_ORDER)*3})")
     return keypoints
 
 
@@ -290,15 +290,15 @@ class RealTimeDataProcessor:
     def add_person_detection(self, person_dict, timestamp):
         """Add person detection data"""
         person_id = person_dict.get('id', 0)
-        print(f"DEBUG: Adding person detection for ID: {person_id}")
+        #print(f"DEBUG: Adding person detection for ID: {person_id}")
         
         # Extract keypoints
         keypoints = extract_keypoints_from_person_dict(person_dict)
-        print(f"DEBUG: Extracted {len(keypoints)//3} keypoints, total length: {len(keypoints)}")
+        #print(f"DEBUG: Extracted {len(keypoints)//3} keypoints, total length: {len(keypoints)}")
         
         # Compute bounding box
         bbox = compute_bbox_from_keypoints(keypoints)
-        print(f"DEBUG: Computed bbox: {bbox}")
+        #print(f"DEBUG: Computed bbox: {bbox}")
         
         # Estimate 3D position (simplified)
         bbox_height = bbox[3] - bbox[1] if bbox[3] > bbox[1] else 100
@@ -330,37 +330,36 @@ class RealTimeDataProcessor:
         
         self.person_data[person_id].append(person_data)
         self.person_frame_tracker[person_id].append(self.frame_count)
-        print(f"DEBUG: Person {person_id} now has {len(self.person_data[person_id])} detections")
+        #print(f"DEBUG: Person {person_id} now has {len(self.person_data[person_id])} detections")
     
     def can_generate_sequence(self, person_id):
         """Check if we can generate a sequence for a person"""
         if person_id not in self.person_data:
-            print(f"DEBUG: Person {person_id} not in person_data")
             return False
         
         person_frames = self.person_frame_tracker[person_id]
-        print(f"DEBUG: Person {person_id} has {len(person_frames)} frames: {person_frames}")
+        #print(f"DEBUG: Person {person_id} has {len(person_frames)} frames: {person_frames}")
         
         # Minimum requirement: OBS_LEN frames (4 frames for observation)
         if len(person_frames) < OBS_LEN:
-            print(f"DEBUG: Person {person_id} needs minimum {OBS_LEN} frames, has {len(person_frames)}")
+            #print(f"DEBUG: Person {person_id} needs minimum {OBS_LEN} frames, has {len(person_frames)}")
             return False
         
         # Use up to SEQ_LEN frames, but at least OBS_LEN frames
         frames_to_use = min(len(person_frames), SEQ_LEN)
         recent_frames = person_frames[-frames_to_use:]
         
-        print(f"DEBUG: Person {person_id} using {len(recent_frames)} frames out of {len(person_frames)} available")
+        #print(f"DEBUG: Person {person_id} using {len(recent_frames)} frames out of {len(person_frames)} available")
         
         # Check frame intervals (should be roughly INTERVAL apart)
         if len(recent_frames) > 1:
             for i in range(1, len(recent_frames)):
                 frame_diff = recent_frames[i] - recent_frames[i-1]
                 if frame_diff > INTERVAL * 3:  # Allow more tolerance for minimum sequences
-                    print(f"DEBUG: Person {person_id} frame gap too large: {frame_diff} > {INTERVAL * 3}")
+                    #print(f"DEBUG: Person {person_id} frame gap too large: {frame_diff} > {INTERVAL * 3}")
                     return False
         
-        print(f"DEBUG: Person {person_id} CAN generate sequence with {len(recent_frames)} frames!")
+        #print(f"DEBUG: Person {person_id} CAN generate sequence with {len(recent_frames)} frames!")
         return True
     
     def generate_model_input(self, person_id):
@@ -380,10 +379,10 @@ class RealTimeDataProcessor:
         person_history = list(self.person_data[person_id])[-frames_to_use:]
         ego_history = list(self.ego_poses)[-frames_to_use:]
         
-        print(f"DEBUG: Using {frames_to_use} frames for person {person_id} (available: person={available_person_frames}, ego={available_ego_frames})")
+        #print(f"DEBUG: Using {frames_to_use} frames for person {person_id} (available: person={available_person_frames}, ego={available_ego_frames})")
         
         if len(person_history) < OBS_LEN or len(ego_history) < OBS_LEN:
-            print(f"DEBUG: Insufficient data after selection: person={len(person_history)}, ego={len(ego_history)}")
+            #print(f"DEBUG: Insufficient data after selection: person={len(person_history)}, ego={len(ego_history)}")
             return None
         
         # Prepare model input tensors
@@ -433,7 +432,7 @@ class RealTimeDataProcessor:
                 Y_seq.append(preprocessed.tolist())
                 
             except Exception as e:
-                print(f"Warning: Failed to process ground truth for frame {i}: {e}")
+                #print(f"Warning: Failed to process ground truth for frame {i}: {e}")
                 boxes_2d_seq.append([x_2d-25, y_2d-50, x_2d+25, y_2d+50])
                 Y_seq.append([0.0] * 34)  # Default size for preprocessed data
             
@@ -454,7 +453,7 @@ class RealTimeDataProcessor:
             boxes_2d_seq.append(boxes_2d_seq[last_idx].copy())
             ego_pose_seq.append(ego_pose_seq[last_idx].copy())
             
-        print(f"DEBUG: Generated sequences of length {len(X_seq)} (padded from {frames_to_use} actual frames)")
+        #print(f"DEBUG: Generated sequences of length {len(X_seq)} (padded from {frames_to_use} actual frames)")
         
         # Convert to tensors
         model_input = {
@@ -557,8 +556,8 @@ if __name__ == "__main__":
     # Example usage
     processor = RealTimeDataProcessor()
     
-    print("Real-Time Data Processor initialized")
-    print(f"Sequence length: {SEQ_LEN}")
-    print(f"Observation length: {OBS_LEN}")
-    print(f"Prediction length: {PRED_LEN}")
-    print(f"Frame interval: {INTERVAL}")
+    #print("Real-Time Data Processor initialized")
+    #print(f"Sequence length: {SEQ_LEN}")
+    #print(f"Observation length: {OBS_LEN}")
+    #print(f"Prediction length: {PRED_LEN}")
+    #print(f"Frame interval: {INTERVAL}")
