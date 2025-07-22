@@ -239,9 +239,7 @@ class RealTimeTrajectoryPredictor:
                 if ego_data:
                     ego_data['timestamp'] = max(self.latest_map_odom_timestamp, self.latest_odom_base_timestamp)
                     ego_data['seq'] = self.latest_odom_base_frame['seq']
-                    self.data_processor.add_ego_pose(ego_data)                    
-                    # Show recent ego poses for debugging
-                    recent_poses = list(self.data_processor.ego_poses)[-5:]  # Last 5 poses
+                    self.data_processor.add_ego_pose(ego_data)
             
             # FALLBACK: If we only have odom->base_footprint, use it directly for now
             if odom_base_transforms and not self.latest_map_odom_frame:
@@ -356,6 +354,7 @@ class RealTimeTrajectoryPredictor:
         
         # Process each person in the list
         for person_idx, person in enumerate(msg.persons):
+            person_id = person.id if person.id else f"person_{person_idx}"
             
             # Extract keypoints from the person
             keypoints = self.extract_keypoints_from_person(person)
@@ -363,7 +362,7 @@ class RealTimeTrajectoryPredictor:
             # Use body_pose directly from Person message structure
             body_pose = person.body_pose
             person_data = {
-                'id': person.id if person.id else f"person_{person_idx}",  # Use index if no ID
+                'id': person_id,
                 'timestamp': timestamp,
                 'keypoints': keypoints,
                 'x': float(body_pose.position.x),
@@ -383,13 +382,6 @@ class RealTimeTrajectoryPredictor:
                                        for part, kp in zip(CORRECT_ORDER, keypoints)]
             
             self.data_processor.add_person_detection(person_data, timestamp)
-        
-        # Print frame status with batch progress
-        ego_count = len(self.data_processor.ego_poses)
-        minimum_required = self.obs_len  # Minimum frames needed to start prediction
-        optimal_data = self.seq_len * self.interval  # Optimal number of frames
-        active_persons = len(self.data_processor.get_active_persons())
-        
         
         # Try to predict trajectories (pass timestamp for rosbag compatibility)
         self.try_predict_trajectories(timestamp)
@@ -522,8 +514,9 @@ class RealTimeTrajectoryPredictor:
                         predictions[person_id] = trajectory
                     
             except Exception as e:
-                print("Failed to predict trajectory for person {}: {}".format(person_id, e))
+                rospy.logwarn("Failed to predict trajectory for person {}: {}".format(person_id, e))
                 import traceback
+                rospy.logdebug("   Traceback: {}".format(traceback.format_exc()))
         
         if predictions:
             self.publish_predictions(predictions, current_time)
@@ -911,6 +904,12 @@ class RealTimeTrajectoryPredictor:
         # The script will respond to incoming messages rather than polling at a fixed rate
         rospy.loginfo("Script is event-driven - waiting for ROS messages...")
         rospy.loginfo("Topics subscribed: /tf (map->odom), /image_detections")
+        
+        # Keep the node alive to process incoming messages
+        try:
+            rospy.spin()
+        except KeyboardInterrupt:
+            rospy.loginfo("Shutting down Real-Time Trajectory Predictor...")
         
 
 def main():
