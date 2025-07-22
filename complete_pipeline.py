@@ -39,7 +39,7 @@ CORRECT_ORDER = [
 def log_message(message, level="INFO"):
     """Log a message with timestamp."""
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{timestamp}] {level}: {message}")
+    print("[{0}] {1}: {2}".format(timestamp, level, message))
 
 
 def ensure_directory_exists(path):
@@ -90,7 +90,7 @@ def extract_epfl_ego_data(bag_file, output_file):
             topics = bag.get_type_and_topic_info()[1].keys()
             if '/raw_bodies' not in topics:
                 log_message("Error: /raw_bodies topic not found in the bag file.", "ERROR")
-                log_message(f"Available topics: {list(topics)}", "INFO")
+                log_message("Available topics: {0}".format(list(topics)), "INFO")
                 return False
             
             if '/tf' not in topics:
@@ -111,7 +111,7 @@ def extract_epfl_ego_data(bag_file, output_file):
                         timestamp = t.to_sec()
                         odom_transforms.append((timestamp, transform))
             
-            log_message(f"Found {len(odom_transforms)} odom transforms", "INFO")
+            log_message("Found {0} odom transforms".format(len(odom_transforms)), "INFO")
             
             # Second pass: process /raw_bodies messages (one frame per message)
             log_message("Processing /raw_bodies messages...", "INFO")
@@ -176,14 +176,14 @@ def extract_epfl_ego_data(bag_file, output_file):
                     frame_count += 1
                     processed_count += 1
                     if processed_count % 100 == 0:
-                        log_message(f"Processed {processed_count} /raw_bodies messages...", "INFO")
+                        log_message("Processed {0} /raw_bodies messages...".format(processed_count), "INFO")
             
-            log_message(f"Successfully processed {processed_count} /raw_bodies messages", "INFO")
-            log_message(f"Generated {frame_count} frames (one per message) in EPFL ego format", "INFO")
+            log_message("Successfully processed {0} /raw_bodies messages".format(processed_count), "INFO")
+            log_message("Generated {0} frames (one per message) in EPFL ego format".format(frame_count), "INFO")
             return True
             
     except Exception as e:
-        log_message(f"Error processing bag file: {e}", "ERROR")
+        log_message("Error processing bag file: {0}".format(e), "ERROR")
         return False
 
 
@@ -202,18 +202,18 @@ def read_rosbag_topics(bag_file, topics_to_read):
     
     try:
         with rosbag.Bag(bag_file, 'r') as bag:
-            log_message(f"Reading bag file: {bag_file}", "INFO")
+            log_message("Reading bag file: {0}".format(bag_file), "INFO")
             
             # Get bag info
             info = bag.get_type_and_topic_info()
             available_topics = list(info[1].keys())
             
-            log_message(f"Available topics: {available_topics}", "INFO")
+            log_message("Available topics: {0}".format(available_topics), "INFO")
             
             # Check which requested topics are available
             missing_topics = [topic for topic in topics_to_read if topic not in available_topics]
             if missing_topics:
-                log_message(f"Warning: Topics not found in bag: {missing_topics}", "WARNING")
+                log_message("Warning: Topics not found in bag: {0}".format(missing_topics), "WARNING")
             
             # Read messages from the specified topics
             for topic, msg, timestamp in bag.read_messages(topics=topics_to_read):
@@ -222,11 +222,11 @@ def read_rosbag_topics(bag_file, topics_to_read):
                     'timestamp': timestamp
                 })
                 
-        log_message(f"Successfully read {sum(len(msgs) for msgs in topic_data.values())} messages", "INFO")
+        log_message("Successfully read {0} messages".format(sum(len(msgs) for msgs in topic_data.values())), "INFO")
         return topic_data
         
     except Exception as e:
-        log_message(f"Error reading bag file {bag_file}: {e}", "ERROR")
+        log_message("Error reading bag file {0}: {1}".format(bag_file, e), "ERROR")
         return topic_data
 
 
@@ -409,10 +409,10 @@ def process_rosbag_to_local_format(bag_file, output_file):
     
     # Define the topics to read
     topics_to_read = ['/image_detections', '/raw_bodies']
-    
-    log_message(f"Processing bag file: {bag_file}", "INFO")
-    log_message(f"Topics to read: {topics_to_read}", "INFO")
-    
+
+    log_message("Processing bag file: {0}".format(bag_file), "INFO")
+    log_message("Topics to read: {0}".format(topics_to_read), "INFO")
+
     # Read data from bag file
     topic_data = read_rosbag_topics(bag_file, topics_to_read)
     
@@ -473,11 +473,11 @@ def process_rosbag_to_local_format(bag_file, output_file):
                 json_string = json.dumps(frame_entry, sort_keys=False)
                 out_f.write(json_string + '\n')
         
-        log_message(f"Successfully processed {len(detections_data)} frames", "INFO")
+        log_message("Successfully processed {0} frames".format(len(detections_data)), "INFO")
         return True
         
     except IOError as e:
-        log_message(f"Error writing output file: {e}", "ERROR")
+        log_message("Error writing output file: {0}".format(e), "ERROR")
         return False
 
 
@@ -495,16 +495,16 @@ def organize_json_pairs(base_path, folder_types=['invited', 'wild']):
         folder_path = os.path.join(base_path, folder_name)
         
         if not os.path.exists(folder_path):
-            log_message(f"Folder {folder_path} does not exist, skipping...", "WARNING")
+            log_message("Folder {0} does not exist, skipping...".format(folder_path), "WARNING")
             continue
             
-        log_message(f"Processing folder: {folder_name}", "INFO")
+        log_message("Processing folder: {0}".format(folder_name), "INFO")
         
         # Get all JSON files in the folder
         json_files = [f for f in os.listdir(folder_path) if f.endswith('.json')]
         
         if not json_files:
-            log_message(f"No JSON files found in {folder_name}", "INFO")
+            log_message("No JSON files found in {0}".format(folder_name), "INFO")
             continue
         
         # Group files by their common prefix
@@ -527,7 +527,7 @@ def organize_json_pairs(base_path, folder_types=['invited', 'wild']):
                 if not os.path.exists(new_folder_path):
                     os.makedirs(new_folder_path)
                 
-                log_message(f"Created folder: {prefix}", "INFO")
+                log_message("Created folder: {0}".format(prefix), "INFO")
                 
                 # Move both files to the new folder
                 for file in files:
@@ -535,11 +535,11 @@ def organize_json_pairs(base_path, folder_types=['invited', 'wild']):
                     dst_path = os.path.join(new_folder_path, file)
                     try:
                         shutil.move(src_path, dst_path)
-                        log_message(f"  Moved: {file}", "INFO")
+                        log_message("  Moved: {0}".format(file), "INFO")
                     except Exception as e:
-                        log_message(f"  Error moving {file}: {e}", "ERROR")
+                        log_message("  Error moving {0}: {1}".format(file, e), "ERROR")
             else:
-                log_message(f"Warning: Found {len(files)} files for prefix '{prefix}' (expected 2): {files}", "WARNING")
+                log_message("Warning: Found {0} files for prefix '{1}' (expected 2): {2}".format(len(files), prefix, files), "WARNING")
 
 
 # ========================
@@ -555,10 +555,10 @@ def process_bag_files_in_folder(input_folder, output_folder, folder_type):
     bag_files = glob.glob(bag_pattern)
     
     if not bag_files:
-        log_message(f"No .bag files found in {input_folder}", "WARNING")
+        log_message("No .bag files found in {0}".format(input_folder), "WARNING")
         return 0, 0
     
-    log_message(f"Found {len(bag_files)} .bag files in {folder_type}", "INFO")
+    log_message("Found {0} .bag files in {1}".format(len(bag_files), folder_type), "INFO")
     
     # Ensure output directory exists
     ensure_directory_exists(output_folder)
@@ -570,10 +570,10 @@ def process_bag_files_in_folder(input_folder, output_folder, folder_type):
     for i, bag_file in enumerate(bag_files, 1):
         bag_name = os.path.splitext(os.path.basename(bag_file))[0]
         
-        ego_output_file = os.path.join(output_folder, f"{bag_name}_ego_coordinates.json")
-        local_output_file = os.path.join(output_folder, f"{bag_name}_local_coordinates.json")
+        ego_output_file = os.path.join(output_folder, "{0}_ego_coordinates.json".format(bag_name))
+        local_output_file = os.path.join(output_folder, "{0}_local_coordinates.json".format(bag_name))
         
-        log_message(f"[{i}/{len(bag_files)}] Processing: {bag_name}", "INFO")
+        log_message("[{0}/{1}] Processing: {2}".format(i, len(bag_files), bag_name), "INFO")
         
         try:
             # Process ego format
@@ -584,14 +584,14 @@ def process_bag_files_in_folder(input_folder, output_folder, folder_type):
             
             if ego_success and local_success:
                 successful_count += 1
-                log_message(f" Successfully processed: {bag_name}", "INFO")
+                log_message(" Successfully processed: {0}".format(bag_name), "INFO")
             else:
                 failed_count += 1
-                log_message(f"✗ Failed to process: {bag_name}", "ERROR")
+                log_message("  Failed to process: {0}".format(bag_name), "ERROR")
             
         except Exception as e:
             failed_count += 1
-            log_message(f"✗ Error processing {bag_name}: {e}", "ERROR")
+            log_message("  Error processing {0}: {1}".format(bag_name, e), "ERROR")
     
     return successful_count, failed_count
 
@@ -603,7 +603,7 @@ def extract_epfl_local_format(bag_file, output_file):
     try:
         return process_rosbag_to_local_format(bag_file, output_file)
     except Exception as e:
-        log_message(f"Error in local format processing: {e}", "ERROR")
+        log_message("Error in local format processing: {0}".format(e), "ERROR")
         return False
 
 
@@ -628,14 +628,14 @@ def main():
     for folder_type in ['invited', 'wild']:
         input_folder = os.path.join(rosbag_output_base, folder_type)
         if not os.path.exists(input_folder):
-            log_message(f"Input folder does not exist: {input_folder}", "WARNING")
+            log_message("Input folder does not exist: {0}".format(input_folder), "WARNING")
     
     total_successful = 0
     total_failed = 0
     
     # Process both invited and wild folders
     for folder_type in ['invited', 'wild']:
-        log_message(f"Processing {folder_type.upper()} folder", "INFO")
+        log_message("Processing {0} folder".format(folder_type.upper()), "INFO")
         log_message("="*50, "INFO")
         
         input_folder = os.path.join(rosbag_output_base, folder_type)
@@ -643,7 +643,7 @@ def main():
         
         # Skip if input folder doesn't exist
         if not os.path.exists(input_folder):
-            log_message(f"Skipping {folder_type} - input folder does not exist", "WARNING")
+            log_message("Skipping {0} - input folder does not exist".format(folder_type), "WARNING")
             continue
         
         # Process bag files
@@ -651,7 +651,7 @@ def main():
         total_successful += successful
         total_failed += failed
         
-        log_message(f"{folder_type} processing complete: {successful} successful, {failed} failed", "INFO")
+        log_message("{0} processing complete: {1} successful, {2} failed".format(folder_type, successful, failed), "INFO")
     
     # Organize JSON files into pairs
     log_message("Organizing JSON files into paired folders", "INFO")
@@ -661,14 +661,14 @@ def main():
     log_message("="*60, "INFO")
     log_message("PIPELINE PROCESSING COMPLETE", "INFO")
     log_message("="*60, "INFO")
-    log_message(f"Total successful: {total_successful}", "INFO")
-    log_message(f"Total failed: {total_failed}", "INFO")
+    log_message("Total successful: {0}".format(total_successful), "INFO")
+    log_message("Total failed: {0}".format(total_failed), "INFO")
     
     if total_failed == 0:
         log_message(" All operations completed successfully!", "INFO")
         return True
     else:
-        log_message(f" {total_failed} operations had issues", "WARNING")
+        log_message("{0} operations had issues".format(total_failed), "WARNING")
         return total_successful > 0
 
 
@@ -680,5 +680,5 @@ if __name__ == "__main__":
         log_message("Operation cancelled by user", "INFO")
         sys.exit(1)
     except Exception as e:
-        log_message(f"Unexpected error: {e}", "ERROR")
+        log_message("Unexpected error: {0}".format(e), "ERROR")
         sys.exit(1)
