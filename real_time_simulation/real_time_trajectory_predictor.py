@@ -1,24 +1,29 @@
-#!/usr/bin/env python3
-"""
-Real-Time Trajectory Predictor for ROS
-This script subscribes to ROS topics (/tf, /image_detections),
-processes data in real-time to match MonoTransmotion model format,
-and generates trajectory predictions.
-
-The script now uses the map->odom transformation instead of odom->base_footprint
-to provide better global localization context for trajectory prediction.
-"""
-
 import os
 import sys
+# Add model code directory to path
+model_code_path = os.path.expanduser("~/thesis_aux/model/code")
+sys.path.append(model_code_path)
+
+# Add real-time data processor
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
 import json
-import time
-import math
 import numpy as np
 import torch
-import argparse
-from collections import defaultdict, deque, OrderedDict
 from pyquaternion import Quaternion
+import rospy
+from std_msgs.msg import String, Header
+from geometry_msgs.msg import PoseArray, Pose, Point, Quaternion as ROSQuaternion, PoseStamped
+from nav_msgs.msg import Path
+from visualization_msgs.msg import Marker, MarkerArray
+from tf2_msgs.msg import TFMessage
+from human_awareness_msgs.msg import PersonsList, Person
+from real_time_data_processor import (RealTimeDataProcessor, process_tf_message_dict, process_image_detections_dict, process_raw_bodies_dict)
+from eval.evaluator import Evaluator
+import yaml
+import traceback
+from utils import joint2traj, recover_traj, loc2traj, batch_process_coords
+import argparse
 
 # Add model code directory to path
 model_code_path = os.path.expanduser("~/thesis_aux/model/code")
@@ -27,20 +32,6 @@ sys.path.append(model_code_path)
 # Add real-time data processor
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_dir)
-
-import rospy
-from std_msgs.msg import String, Header
-from geometry_msgs.msg import PoseArray, Pose, Point, Quaternion as ROSQuaternion, PoseStamped
-from nav_msgs.msg import Path
-from visualization_msgs.msg import Marker, MarkerArray
-from sensor_msgs.msg import Image, CompressedImage
-from tf2_msgs.msg import TFMessage
-from human_awareness_msgs.msg import PersonTracker, PersonsList, Person
-from real_time_data_processor import (RealTimeDataProcessor, process_tf_message_dict, process_image_detections_dict, process_raw_bodies_dict)
-from eval.evaluator import Evaluator
-from utils.camera import project_3d, correct_angle, to_spherical
-from utils.process import preprocess_monoloco
-import yaml
 
 # Define correct keypoint order
 CORRECT_ORDER = [
@@ -60,11 +51,10 @@ class RealTimeTrajectoryPredictor:
         rospy.init_node('real_time_trajectory_predictor', anonymous=True)
         
         # Configuration - Match model's expected parameters
-        self.seq_len = 10       # Must match model config
-        self.interval = 5      # Reduced from 15  
-        self.obs_len = 4        # Must match model config
-        self.pred_len = 6       # predict the next 6 frames
-        frequency = 7.5        # Hz, must match model config
+        self.seq_len = 10
+        self.interval = 15
+        self.obs_len = 4
+        self.pred_len = 2
         
         # Initialize data processor
         self.data_processor = RealTimeDataProcessor()
@@ -85,14 +75,6 @@ class RealTimeTrajectoryPredictor:
         
         # Subscribers
         self.setup_subscribers()
-        
-        rospy.loginfo("Real-Time Trajectory Predictor initialized")
-        rospy.loginfo("Waiting for data from topics: /tf (map->odom + odom->base_footprint), /image_detections (PersonsList)")
-        rospy.loginfo("Minimum {} frames needed to start predictions".format(self.obs_len))
-        rospy.loginfo("Optimal {} frames ({}*{} interval) = ~{} seconds at {}Hz".format(
-            self.seq_len * self.interval, self.seq_len, self.interval, 
-            (self.seq_len * self.interval) / frequency, frequency))
-        rospy.loginfo("READY FOR ROSBAG PLAYBACK - Script is now event-driven")
 
     def setup_model(self):
         """Setup the trajectory prediction model"""
@@ -108,7 +90,6 @@ class RealTimeTrajectoryPredictor:
                 self.config = yaml.safe_load(f)
             
             # Setup evaluator args
-            import argparse
             args = argparse.Namespace()
             args.eval_mode = "traj_pred"
             
@@ -145,7 +126,6 @@ class RealTimeTrajectoryPredictor:
             
         except Exception as e:
             rospy.logerr("Failed to load model: {}".format(e))
-            import traceback
             rospy.logwarn("Traceback: {}".format(traceback.format_exc()))
             self.model = None
 
@@ -329,7 +309,6 @@ class RealTimeTrajectoryPredictor:
             
         except Exception as e:
             rospy.logwarn("Failed to combine transforms: {}".format(e))
-            import traceback
             rospy.logwarn("Transform combination traceback: {}".format(traceback.format_exc()))
             return None
 
@@ -390,8 +369,6 @@ class RealTimeTrajectoryPredictor:
         """Extract keypoints from Person message in correct order"""
         # Create mapping from part_id to coordinates
         part_map = {}
-        
-        
         # Process body_parts from Person message
         for body_part in person.body_parts:
             # From the examples, BodyPart has: part_id (string), x, y, confidence
@@ -402,9 +379,6 @@ class RealTimeTrajectoryPredictor:
                 'confidence': float(body_part.confidence)
             }
         
-        # Map from the message format to our expected format
-        # From the examples, we have: Nose, Neck, RShoulder, RElbow, RWrist, LShoulder, LElbow, LWrist, 
-        # MidHip, RHip, RKnee, RAnkle, LHip, LKnee, LAnkle, REye, LEye, REar, LEar, etc.
         keypoint_mapping = {
             "Nose": "Nose",
             "REye": "REye", 
@@ -434,49 +408,6 @@ class RealTimeTrajectoryPredictor:
                 keypoints.append({'x': 0.0, 'y': 0.0, 'confidence': 0.0})
         
         return keypoints
-
-    def estimate_position_from_keypoints(self, keypoints):
-        """Estimate 3D position from 2D keypoints"""
-        valid_kps = [kp for kp in keypoints if kp['confidence'] > 0.3]
-        
-        if not valid_kps:
-            return {'x': 0.0, 'y': 0.0, 'z': 0.0}
-        
-        # Calculate center
-        x_center = sum(kp['x'] for kp in valid_kps) / len(valid_kps)
-        y_center = sum(kp['y'] for kp in valid_kps) / len(valid_kps)
-        
-        # Estimate depth from bounding box
-        bbox = self.compute_bbox_from_keypoints(keypoints)
-        bbox_height = bbox[3] - bbox[1] if bbox[3] > bbox[1] else 100
-        
-        if bbox_height > 0:
-            estimated_depth = max(1.5, min(8.0, 1.7 * VIZZY_CAMERA_K[1,1] / bbox_height))
-        else:
-            estimated_depth = 3.0
-        
-        # Convert to world coordinates
-        world_x = (x_center - VIZZY_CAMERA_K[0,2]) * estimated_depth / VIZZY_CAMERA_K[0,0]
-        world_y = (y_center - VIZZY_CAMERA_K[1,2]) * estimated_depth / VIZZY_CAMERA_K[1,1]
-        
-        return {
-            'x': float(estimated_depth),  # Forward distance
-            'y': float(-world_x),         # Left-right
-            'z': float(-world_y + 1.2)    # Up-down + camera height
-        }
-
-    def compute_bbox_from_keypoints(self, keypoints):
-        """Compute bounding box from keypoints"""
-        xs, ys = [], []
-        for kp in keypoints:
-            if kp['confidence'] > 0:
-                xs.append(kp['x'])
-                ys.append(kp['y'])
-        
-        if not xs or not ys:
-            return [0.0, 0.0, 0.0, 0.0]
-        
-        return [min(xs), min(ys), max(xs), max(ys)]
 
     def get_raw_keypoints_list(self, keypoints):
         """Convert keypoints to flat list format"""
@@ -512,10 +443,8 @@ class RealTimeTrajectoryPredictor:
                     
                     if trajectory is not None:
                         predictions[person_id] = trajectory
-                    
             except Exception as e:
                 rospy.logwarn("Failed to predict trajectory for person {}: {}".format(person_id, e))
-                import traceback
                 rospy.logdebug("   Traceback: {}".format(traceback.format_exc()))
         
         if predictions:
@@ -634,7 +563,6 @@ class RealTimeTrajectoryPredictor:
                     return None
                 
                 # Create scene representation from keypoints
-                from utils import joint2traj, recover_traj, loc2traj, batch_process_coords
             
                 scene_train_real_ped, scene_train_mask, padding_mask = joint2traj(inputs)
                 
@@ -717,7 +645,6 @@ class RealTimeTrajectoryPredictor:
                 
         except Exception as e:
             rospy.logwarn("Model prediction failed: {}".format(e))
-            import traceback
             return None
 
     def publish_predictions(self, predictions, timestamp):
@@ -762,6 +689,7 @@ class RealTimeTrajectoryPredictor:
                 pose_stamped.pose.position.x = pos['x']
                 pose_stamped.pose.position.y = pos['y']
                 pose_stamped.pose.position.z = pos['z'] if pos['z'] != 0.0 else 0.02  # Slightly above ground
+                print("positions x,y,z:", pos['x'], pos['y'], pos['z'])
                 pose_stamped.pose.orientation.w = 1.0
                 path_msg.poses.append(pose_stamped)
             
@@ -779,7 +707,10 @@ class RealTimeTrajectoryPredictor:
         marker_id = 0
         total_markers = 0
         
+        # Only visualize person 0
         for person_id, trajectory in predictions.items():
+            if str(person_id) != '0' and person_id != 0:
+                continue
             
             # Create line strip for trajectory path
             trajectory_marker = Marker()
@@ -896,31 +827,18 @@ class RealTimeTrajectoryPredictor:
         self.visualization_pub.publish(marker_array)
 
     def run(self):
-        """Main execution loop"""
-        rospy.loginfo("Real-Time Trajectory Predictor is running...")
-        rospy.loginfo("Predictions will start after minimum {} frames collected".format(self.obs_len))
-        
-        # For rosbag compatibility, use event-driven approach instead of polling
-        # The script will respond to incoming messages rather than polling at a fixed rate
-        rospy.loginfo("Script is event-driven - waiting for ROS messages...")
-        rospy.loginfo("Topics subscribed: /tf (map->odom), /image_detections")
-        
         # Keep the node alive to process incoming messages
         try:
             rospy.spin()
         except KeyboardInterrupt:
             rospy.loginfo("Shutting down Real-Time Trajectory Predictor...")
-        
 
 def main():
     try:
         predictor = RealTimeTrajectoryPredictor()
         predictor.run()
-    except rospy.ROSInterruptException:
-        pass
     except Exception as e:
         rospy.logerr("Failed to start predictor: {}".format(e))
-
 
 if __name__ == '__main__':
     main()
