@@ -93,15 +93,6 @@ class RealTimeTrajectoryPredictor:
             self.seq_len * self.interval, self.seq_len, self.interval, 
             (self.seq_len * self.interval) / frequency, frequency))
         rospy.loginfo("READY FOR ROSBAG PLAYBACK - Script is now event-driven")
-        
-        # Print diagnostic information
-        print("="*60)
-        print("DEBUG: Script fully initialized and ready")
-        print("DEBUG: Subscribed to topics:")
-        print("  - /tf (TFMessage) - map->odom and odom->base_footprint transforms")
-        print("  - /image_detections (PersonsList)")
-        print("DEBUG: Waiting for messages...")
-        print("="*60)
 
     def setup_model(self):
         """Setup the trajectory prediction model"""
@@ -165,25 +156,16 @@ class RealTimeTrajectoryPredictor:
         rospy.Subscriber('/image_detections', PersonsList, self.image_detections_callback)
 
     def tf_callback(self, msg):
-        """Process transform messages to extract both map->odom and odom->base_footprint transforms"""
-        print(f"🔄 TF CALLBACK: Received {len(msg.transforms)} transforms")
-        
+        """Process transform messages to extract both map->odom and odom->base_footprint transforms"""        
         map_odom_transforms = []
         odom_base_transforms = []
         
         # Find both types of transforms in this message
         for transform in msg.transforms:
-            print(f"🔍 TF TRANSFORM: frame_id='{transform.header.frame_id}' -> child_frame_id='{transform.child_frame_id}'")
             if transform.header.frame_id == 'map' and transform.child_frame_id == 'odom':
                 map_odom_transforms.append(transform)
-                print(f"✅ FOUND: map->odom transform: t=({transform.transform.translation.x:.3f}, {transform.transform.translation.y:.3f})")
             elif transform.header.frame_id == 'odom' and transform.child_frame_id == 'base_footprint':
-                odom_base_transforms.append(transform)
-                print(f"✅ FOUND: odom->base_footprint transform: t=({transform.transform.translation.x:.3f}, {transform.transform.translation.y:.3f})")
-            else:
-                print(f"❌ IGNORED: {transform.header.frame_id}->{transform.child_frame_id} (not needed)")
-        
-        print(f"📊 TF SUMMARY: Found {len(map_odom_transforms)} map->odom, {len(odom_base_transforms)} odom->base_footprint")
+                odom_base_transforms.append(transform)        
         
         # Process map->odom transforms
         if map_odom_transforms:
@@ -206,7 +188,6 @@ class RealTimeTrajectoryPredictor:
                 }
             }
             self.latest_map_odom_timestamp = latest_transform.header.stamp.to_sec()
-            # print(f"DEBUG: Updated map->odom transform: t=({latest_transform.transform.translation.x:.3f}, {latest_transform.transform.translation.y:.3f})")
         
         # Process odom->base_footprint transforms
         if odom_base_transforms:
@@ -229,18 +210,15 @@ class RealTimeTrajectoryPredictor:
                 }
             }
             self.latest_odom_base_timestamp = latest_transform.header.stamp.to_sec()
-            # print(f"DEBUG: Updated odom->base_footprint transform: t=({latest_transform.transform.translation.x:.3f}, {latest_transform.transform.translation.y:.3f})")
         
         # Combine transforms to get map->base_footprint if both are available
         if self.latest_map_odom_frame and self.latest_odom_base_frame:
-            print(f"🔄 TF COMBINATION: Both transforms available, attempting combination...")
             combined_transform = self.combine_transforms(
                 self.latest_map_odom_frame, 
                 self.latest_odom_base_frame
             )
             
             if combined_transform:
-                print(f"✅ TF COMBINATION: Combined map->base_footprint: t=({combined_transform['translation']['x']:.3f}, {combined_transform['translation']['y']:.3f})")
                 # Convert to dictionary format for data processor
                 # Use 'odom' as frame_id since process_tf_message_dict looks for odom transforms
                 tf_dict = {
@@ -257,36 +235,16 @@ class RealTimeTrajectoryPredictor:
                                 
                 # Process with data processor
                 ego_data = process_tf_message_dict(tf_dict)
-                print(f"🔍 TF PROCESSING: process_tf_message_dict result: {ego_data is not None}")
                 
                 if ego_data:
                     ego_data['timestamp'] = max(self.latest_map_odom_timestamp, self.latest_odom_base_timestamp)
                     ego_data['seq'] = self.latest_odom_base_frame['seq']
-                    print(f"📝 EGO POSE: Adding combined global pose (map->base_footprint) to data processor")
-                    print(f"   Timestamp: {ego_data['timestamp']:.3f}")
-                    print(f"   Position: x={ego_data['x']:.3f}, y={ego_data['y']:.3f}, z={ego_data['z']:.3f}")
-                    self.data_processor.add_ego_pose(ego_data)
-                    print(f"📊 EGO POSES: Total ego poses now: {len(self.data_processor.ego_poses)}")
-                    
+                    self.data_processor.add_ego_pose(ego_data)                    
                     # Show recent ego poses for debugging
                     recent_poses = list(self.data_processor.ego_poses)[-5:]  # Last 5 poses
-                    print(f"📈 RECENT EGO POSES (last {len(recent_poses)}):")
-                    for i, pose in enumerate(recent_poses):
-                        print(f"   {i}: t={pose.get('timestamp', 'N/A'):.3f}, x={pose.get('x', 'N/A'):.3f}, y={pose.get('y', 'N/A'):.3f}")
-                else:
-                    print(f"❌ TF PROCESSING: process_tf_message_dict returned None - check data processor!")
-            else:
-                print(f"❌ TF COMBINATION: Transform combination failed!")
-        else:
-            print(f"⚠️  TF STATUS: Missing transforms for combination")
-            if not self.latest_map_odom_frame:
-                print(f"   ❌ Still waiting for map->odom transform")
-            if not self.latest_odom_base_frame:
-                print(f"   ❌ Still waiting for odom->base_footprint transform")
             
             # FALLBACK: If we only have odom->base_footprint, use it directly for now
             if odom_base_transforms and not self.latest_map_odom_frame:
-                print(f"🔄 FALLBACK: Using odom->base_footprint directly (no map->odom available)")
                 latest_transform = odom_base_transforms[-1]
                 
                 # Create a simplified tf_dict with just the odom transform
@@ -316,16 +274,10 @@ class RealTimeTrajectoryPredictor:
                     ego_data['timestamp'] = latest_transform.header.stamp.to_sec()
                     ego_data['seq'] = latest_transform.header.seq
                     self.data_processor.add_ego_pose(ego_data)
-                    print(f"✅ FALLBACK: Added odom pose, total: {len(self.data_processor.ego_poses)}")
-                else:
-                    print(f"❌ FALLBACK: Failed to process odom transform")
 
     def combine_transforms(self, map_odom_transform, odom_base_transform):
         """Combine map->odom and odom->base_footprint to get map->base_footprint transform"""
         try:
-            # print(f"DEBUG: Attempting to combine transforms...")
-            # print(f"DEBUG: Map->Odom translation: {map_odom_transform['translation']}")
-            # print(f"DEBUG: Odom->Base translation: {odom_base_transform['translation']}")
             
             # Extract map->odom transform
             t1 = np.array([
@@ -360,9 +312,6 @@ class RealTimeTrajectoryPredictor:
             # Rotation: q_combined = q1 * q2
             q_combined = q1 * q2
             
-            # print(f"DEBUG: Combined translation: {t_combined}")
-            # print(f"DEBUG: Combined rotation: [x={q_combined.x:.3f}, y={q_combined.y:.3f}, z={q_combined.z:.3f}, w={q_combined.w:.3f}]")
-            
             # Return combined transform
             result = {
                 'translation': {
@@ -378,7 +327,6 @@ class RealTimeTrajectoryPredictor:
                 }
             }
             
-            # print(f"DEBUG: Transform combination successful!")
             return result
             
         except Exception as e:
@@ -395,10 +343,6 @@ class RealTimeTrajectoryPredictor:
 
     def image_detections_callback(self, msg):
         """Process person detections from /image_detections topic"""        
-        #print("=" * 50)
-        #print("🎯 IMAGE_DETECTIONS MESSAGE RECEIVED!")
-        #print(f"Found {len(msg.persons)} persons in message")
-        #print("=" * 50)
         
         # PersonsList message contains an array of Person objects
         # Use message timestamp instead of current time (important for rosbag playback)
@@ -412,7 +356,6 @@ class RealTimeTrajectoryPredictor:
         
         # Process each person in the list
         for person_idx, person in enumerate(msg.persons):
-            print(f"Processing person {person_idx}: ID='{person.id}', body_parts={len(person.body_parts)}")
             
             # Extract keypoints from the person
             keypoints = self.extract_keypoints_from_person(person)
@@ -447,19 +390,6 @@ class RealTimeTrajectoryPredictor:
         optimal_data = self.seq_len * self.interval  # Optimal number of frames
         active_persons = len(self.data_processor.get_active_persons())
         
-        print(f"📊 FRAME STATUS: Frame {self.data_processor.frame_count}")
-        print(f"   👥 Persons detected: {len(msg.persons)}")
-        print(f"   🗺️  Map->Base poses: {ego_count} (minimum needed: {minimum_required}, optimal: {optimal_data})")
-        print(f"   🎯 Active persons: {active_persons}")
-        
-        if ego_count < minimum_required:
-            print(f"⚠️  WARNING: Not enough ego poses! Need {minimum_required}, have {ego_count}")
-            print(f"   📈 Need {minimum_required - ego_count} more ego poses before predictions can start")
-        else:
-            print(f"✅ SUFFICIENT DATA: Ready for predictions!")
-        
-        rospy.loginfo("Frame {}: {} persons, Map->Base poses: {} (min:{}, opt:{}), Active persons: {}".format(
-            self.data_processor.frame_count, len(msg.persons), ego_count, minimum_required, optimal_data, active_persons))
         
         # Try to predict trajectories (pass timestamp for rosbag compatibility)
         self.try_predict_trajectories(timestamp)
@@ -469,7 +399,6 @@ class RealTimeTrajectoryPredictor:
         # Create mapping from part_id to coordinates
         part_map = {}
         
-        print(f"DEBUG: Extracting keypoints from {len(person.body_parts)} body parts")
         
         # Process body_parts from Person message
         for body_part in person.body_parts:
@@ -480,9 +409,6 @@ class RealTimeTrajectoryPredictor:
                 'y': float(body_part.y),
                 'confidence': float(body_part.confidence)
             }
-            #print(f"  {part_name}: ({body_part.x}, {body_part.y}, conf={body_part.confidence:.3f})")
-        
-        #print(f"DEBUG: Found keypoints for: {list(part_map.keys())}")
         
         # Map from the message format to our expected format
         # From the examples, we have: Nose, Neck, RShoulder, RElbow, RWrist, LShoulder, LElbow, LWrist, 
@@ -512,12 +438,9 @@ class RealTimeTrajectoryPredictor:
         for expected_name in CORRECT_ORDER:
             if expected_name in keypoint_mapping and keypoint_mapping[expected_name] in part_map:
                 keypoints.append(part_map[keypoint_mapping[expected_name]])
-                print(f"  ✓ Mapped {expected_name}")
             else:
                 keypoints.append({'x': 0.0, 'y': 0.0, 'confidence': 0.0})
-                #print(f"  ✗ Missing {expected_name}")
         
-        #print(f"DEBUG: Extracted {len(keypoints)} keypoints total")
         return keypoints
 
     def estimate_position_from_keypoints(self, keypoints):
@@ -572,16 +495,9 @@ class RealTimeTrajectoryPredictor:
 
     def try_predict_trajectories(self, message_timestamp=None):
         """Attempt to predict trajectories if we have sufficient data"""
-        print(f"DEBUG: try_predict_trajectories called")
-        print(f"DEBUG: Model available: {self.model is not None}")
         
         if not self.model:
-            print(f"DEBUG: No model available, skipping prediction")
             return
-        
-        print(f"DEBUG: Checking data availability...")
-        print(f"DEBUG: Ego poses: {len(self.data_processor.ego_poses)}")
-        print(f"DEBUG: Active persons: {len(self.data_processor.get_active_persons())}")
         
         predictions = {}
         # Use message timestamp for rosbag compatibility, fallback to Time(0) 
@@ -592,39 +508,25 @@ class RealTimeTrajectoryPredictor:
         
         # Get active persons from data processor
         active_persons = self.data_processor.get_active_persons()
-        print(f"DEBUG: Active persons list: {active_persons}")
         
         for person_id in active_persons:
-            print(f"DEBUG: Processing person {person_id}")
             try:
                 # Generate model input using data processor
                 model_input = self.data_processor.generate_model_input(person_id)
-                print(f"DEBUG: Model input for {person_id}: {model_input is not None}")
                 
                 if model_input is not None:
-                    print(f"DEBUG: Attempting trajectory prediction for {person_id}")
                     # Predict trajectory
                     trajectory = self.predict_single_trajectory(model_input)
                     
                     if trajectory is not None:
                         predictions[person_id] = trajectory
-                        rospy.loginfo("✓ Predicted trajectory for person {} - {} steps".format(person_id, len(trajectory)))
-                    else:
-                        print(f"DEBUG: Trajectory prediction failed for {person_id}")
-                else:
-                    print(f"DEBUG: No model input available for {person_id}")
                     
             except Exception as e:
-                rospy.logwarn("Failed to predict trajectory for person {}: {}".format(person_id, e))
+                print("Failed to predict trajectory for person {}: {}".format(person_id, e))
                 import traceback
-                print(f"DEBUG: Prediction error traceback: {traceback.format_exc()}")
         
-        print(f"DEBUG: Total predictions: {len(predictions)}")
         if predictions:
-            print(f"DEBUG: Publishing predictions...")
             self.publish_predictions(predictions, current_time)
-        else:
-            print(f"DEBUG: No predictions to publish")
 
     def prepare_model_input(self, person_id, person_history):
         """Prepare data in the format expected by MonoTransmotion model"""
@@ -669,7 +571,6 @@ class RealTimeTrajectoryPredictor:
                 # Keypoints (convert from [x,y,conf] format to just [x,y] format)
                 if 'keypoints' in ped_data:
                     kps_data = ped_data['keypoints']
-                    print(f"DEBUG: Processing keypoints for frame {i}, raw shape: {np.array(kps_data).shape}")
                     
                     # Convert from flat [x,y,conf,x,y,conf,...] to [[x,y],[x,y],...] format
                     if len(kps_data) == 51:  # 17 keypoints * 3 values
@@ -677,12 +578,9 @@ class RealTimeTrajectoryPredictor:
                         for j in range(0, len(kps_data), 3):
                             kps_xy.extend([kps_data[j], kps_data[j+1]])  # x, y only
                         kps.append(kps_xy)  # 34 values (17 keypoints * 2)
-                        print(f"DEBUG: Converted keypoints to xy-only format, length: {len(kps_xy)}")
                     else:
-                        print(f"DEBUG: Unexpected keypoints length: {len(kps_data)}, using zeros")
                         kps.append([0.0] * 34)  # 17 keypoints * 2 values
                 else:
-                    print(f"DEBUG: No keypoints for frame {i}, using zeros")
                     kps.append([0.0] * 34)  # 17 keypoints * 2 values
                 
                 # Ego pose [q1, q2, q3, q4, x, y, z]
@@ -700,10 +598,6 @@ class RealTimeTrajectoryPredictor:
                 # 3D position
                 boxes_3d.append([ped_data['x'], ped_data['y'], ped_data['z']])
             
-            # Convert to tensors
-            print(f"DEBUG: Converting to tensors - kps list has {len(kps)} elements")
-            print(f"DEBUG: First kps element length: {len(kps[0]) if kps else 'empty'}")
-            
             model_input = {
                 'X': torch.tensor(X, dtype=torch.float32).unsqueeze(0),  # [1, seq_len, 2]
                 'kps': torch.tensor(kps, dtype=torch.float32).unsqueeze(0),  # [1, seq_len, 34]
@@ -711,10 +605,6 @@ class RealTimeTrajectoryPredictor:
                 'boxes_2d': torch.tensor(boxes_2d, dtype=torch.float32).unsqueeze(0),  # [1, seq_len, 4]
                 'boxes_3d': torch.tensor(boxes_3d, dtype=torch.float32).unsqueeze(0),  # [1, seq_len, 3]
             }
-            
-            print(f"DEBUG: Final tensor shapes:")
-            for key, tensor in model_input.items():
-                print(f"  {key}: {tensor.shape}")
             
             return model_input
             
@@ -725,16 +615,9 @@ class RealTimeTrajectoryPredictor:
     def predict_single_trajectory(self, model_input):
         """Use the model to predict a single trajectory"""
         try:
-            print("=" * 60)
-            print("🚀 MODEL PREDICTION START")
-            print("=" * 60)
-            
             with torch.no_grad():
                 # Prepare input data for the localization model
                 inputs = model_input['kps']  # Use keypoints as input
-                print(f"🔍 MODEL INPUT: Input tensor shape: {inputs.shape}")
-                print(f"🔍 MODEL INPUT: Input tensor type: {inputs.dtype}")
-                print(f"🔍 MODEL INPUT: Input tensor device: {inputs.device}")
                 
                 # Convert tensor to the format expected by joint2traj: [batch, seq, 17, 2]
                 if len(inputs.shape) == 4:
@@ -743,38 +626,24 @@ class RealTimeTrajectoryPredictor:
                     if features == 3 and num_keypoints == 17:
                         # Take only x,y coordinates (first 2 features), drop confidence
                         inputs = inputs[:, :, :2, :].permute(0, 1, 3, 2)  # [batch, seq, 17, 2]
-                        print(f"🔧 TENSOR CONVERSION: Converted from [batch, seq, 3, 17] to [batch, seq, 17, 2]: {inputs.shape}")
                     else:
-                        print(f"❌ ERROR: Unexpected 4D tensor dimensions: {inputs.shape}")
                         return None
                 elif len(inputs.shape) == 3:
                     batch_size, seq_length, features = inputs.shape
                     if features == 34:  # 17 keypoints * 2 values (x,y)
                         inputs = inputs.view(batch_size, seq_length, 17, 2)
-                        print(f"🔧 TENSOR CONVERSION: Reshaped from [batch, seq, 34] to [batch, seq, 17, 2]: {inputs.shape}")
                     elif features == 51:  # 17 keypoints * 3 values (x,y,conf) - shouldn't happen now
                         inputs_reshaped = inputs.view(batch_size, seq_length, 17, 3)
                         inputs = inputs_reshaped[:, :, :, :2]  # Take only x,y, drop confidence
-                        print(f"🔧 TENSOR CONVERSION: Converted from [batch, seq, 51] to [batch, seq, 17, 2]: {inputs.shape}")
                     else:
-                        print(f"❌ ERROR: Unexpected feature dimension: {features}, expected 34")
                         return None
                 else:
-                    print(f"❌ ERROR: Unexpected input tensor shape: {inputs.shape}")
                     return None
-                
-                print(f"✅ FINAL INPUT: Shape for joint2traj: {inputs.shape}")
-                print(f"📊 INPUT STATS: Min={inputs.min():.3f}, Max={inputs.max():.3f}, Mean={inputs.mean():.3f}")
                 
                 # Create scene representation from keypoints
                 from utils import joint2traj, recover_traj, loc2traj, batch_process_coords
-                
-                print("🎯 JOINT2TRAJ: Converting keypoints to scene...")
+            
                 scene_train_real_ped, scene_train_mask, padding_mask = joint2traj(inputs)
-                print(f"🎯 JOINT2TRAJ RESULTS:")
-                print(f"   scene_train_real_ped: {scene_train_real_ped.shape}")
-                print(f"   scene_train_mask: {scene_train_mask.shape}")
-                print(f"   padding_mask: {padding_mask.shape}")
                 
                 scene_train_real_ped = scene_train_real_ped.to(self.evaluator.traj_config["DEVICE"])
                 scene_train_mask = scene_train_mask.to(self.evaluator.traj_config["DEVICE"])
@@ -783,116 +652,65 @@ class RealTimeTrajectoryPredictor:
                 # Use only the first person in the scene
                 scene_train_real_ped = scene_train_real_ped[:,0,:,:,:]
                 scene_train_mask = scene_train_mask[:,0,:,:]
-                print(f"🎯 PERSON SELECTION: Selected first person, new shapes:")
-                print(f"   scene_train_real_ped: {scene_train_real_ped.shape}")
-                print(f"   scene_train_mask: {scene_train_mask.shape}")
                 
                 # Use only observation frames for prediction
                 scene_train_real_ped_obs = scene_train_real_ped[:,:self.obs_len,:,:]
                 padding_mask_obs = padding_mask.clone()
                 padding_mask_obs[:,self.obs_len:] = True
-                print(f"🔍 OBSERVATION SELECTION: Using {self.obs_len} frames for localization")
-                print(f"   scene_train_real_ped_obs: {scene_train_real_ped_obs.shape}")
                 
                 # Get localization output
-                print("🧠 LOCALIZATION MODEL: Running inference...")
                 loc_outputs = self.evaluator.loc_model(scene_train_real_ped_obs, padding_mask_obs)
-                print(f"🧠 LOCALIZATION RESULTS:")
-                print(f"   loc_outputs shape: {loc_outputs.shape}")
-                print(f"   loc_outputs stats: Min={loc_outputs.min():.3f}, Max={loc_outputs.max():.3f}, Mean={loc_outputs.mean():.3f}")
-                print(f"   loc_outputs sample values: {loc_outputs.flatten()[:10]}")
                 
                 # Recover trajectory from localization - try simplified approach
                 ego_pose_tensor = model_input['ego_pose']
-                
-                print(f"🌍 EGO POSE: ego_pose_tensor shape: {ego_pose_tensor.shape}")
-                
+                                
                 # Use only observation length for recovery
                 ego_pose_obs = ego_pose_tensor[:, :self.obs_len, :]
-                print(f"🌍 EGO POSE OBS: ego_pose_obs shape: {ego_pose_obs.shape}")
                 
                 # Try to bypass the recover_traj function which is causing issues
                 # For real-time prediction, we can use the localization output directly
                 try:
-                    print("🔄 TRAJECTORY RECOVERY: Attempting direct approach...")
                     # Skip the camera pose transformation and use localization outputs directly
                     # This assumes the localization model already provides world coordinates
                     traj_estimated_ls = loc_outputs.unsqueeze(0)  # Add batch dimension if needed
-                    print(f"✅ TRAJECTORY RECOVERY: Using localization outputs directly: {traj_estimated_ls.shape}")
                     
                 except Exception as e:
-                    print(f"❌ TRAJECTORY RECOVERY: Direct approach failed: {e}")
                     # Fallback: try with simplified camera pose
                     try:
-                        print("🔄 TRAJECTORY RECOVERY: Trying simplified camera pose...")
                         # Create a very simple camera pose (just identity matrices)
                         batch_size = ego_pose_obs.shape[0]
                         camera_pose_simple = torch.zeros(batch_size, self.obs_len, 7)  # [x,y,z,qx,qy,qz,qw]
                         camera_pose_simple[:, :, 6] = 1.0  # Set w=1 for identity quaternion
                         traj_estimated_ls = recover_traj(loc_outputs, ego_pose_obs, camera_pose_simple)
-                        print(f"✅ TRAJECTORY RECOVERY: Simplified camera pose worked: {traj_estimated_ls.shape}")
                     except Exception as e2:
-                        print(f"❌ TRAJECTORY RECOVERY: Simplified camera pose failed: {e2}")
                         # Last resort: manually create trajectory from localization
-                        print("🔄 TRAJECTORY RECOVERY: Manual creation as last resort...")
                         traj_estimated_ls = loc_outputs.unsqueeze(0).unsqueeze(-1).repeat(1, 1, 1, 3)
-                        print(f"✅ TRAJECTORY RECOVERY: Manual trajectory creation: {traj_estimated_ls.shape}")
                 
                 # Convert to trajectory prediction format
-                print("🎯 LOC2TRAJ: Converting to trajectory format...")
                 scene_train_real_ped_traj, scene_train_mask_traj, padding_mask_traj = loc2traj(traj_estimated_ls)
-                print(f"🎯 LOC2TRAJ RESULTS:")
-                print(f"   scene_train_real_ped_traj: {scene_train_real_ped_traj.shape}")
-                print(f"   scene_train_mask_traj: {scene_train_mask_traj.shape}")
-                print(f"   padding_mask_traj: {padding_mask_traj.shape}")
                 
                 # Process for trajectory prediction
-                print("⚙️ BATCH PROCESSING: Processing coordinates...")
                 in_joints, in_masks, out_joints, out_masks, padding_mask_processed, _ = batch_process_coords(
                     scene_train_real_ped_traj, scene_train_mask_traj, padding_mask_traj, 
                     self.evaluator.traj_config, training=False)
                 
-                print(f"⚙️ BATCH PROCESSING RESULTS:")
-                print(f"   in_joints: {in_joints.shape}")
-                print(f"   in_masks: {in_masks.shape}")
-                print(f"   out_joints: {out_joints.shape}")
-                print(f"   out_masks: {out_masks.shape}")
-                print(f"   padding_mask_processed: {padding_mask_processed.shape}")
-                
                 padding_mask_processed = padding_mask_processed.to(self.evaluator.traj_config["DEVICE"])
                 
                 # Predict trajectory
-                print("🚀 TRAJECTORY MODEL: Running trajectory prediction...")
                 pred_joints = self.evaluator.traj_model(in_joints, padding_mask_processed)
-                print(f"🚀 TRAJECTORY MODEL RESULTS:")
-                print(f"   pred_joints shape: {pred_joints.shape}")
-                print(f"   pred_joints stats: Min={pred_joints.min():.3f}, Max={pred_joints.max():.3f}, Mean={pred_joints.mean():.3f}")
                 
                 # Get prediction for future frames
                 pred_joints = pred_joints[:, -self.pred_len:]
                 pred_joints = pred_joints.cpu()
-                print(f"🎯 FUTURE PREDICTION:")
-                print(f"   pred_joints (future {self.pred_len} frames): {pred_joints.shape}")
-                print(f"   pred_joints stats: Min={pred_joints.min():.3f}, Max={pred_joints.max():.3f}, Mean={pred_joints.mean():.3f}")
                 
                 # Add relative position to last observation
                 last_obs_pos = scene_train_real_ped_traj[:,0:1,(self.obs_len-1):self.obs_len, 0, 0:2]
-                print(f"🔄 POSITION ADJUSTMENT:")
-                print(f"   last_obs_pos: {last_obs_pos.shape}")
-                print(f"   last_obs_pos values: {last_obs_pos}")
                 
                 pred_joints = pred_joints + last_obs_pos
-                print(f"   pred_joints after position adjustment: {pred_joints.shape}")
-                print(f"   pred_joints adjusted stats: Min={pred_joints.min():.3f}, Max={pred_joints.max():.3f}, Mean={pred_joints.mean():.3f}")
                 
                 # Convert to trajectory format
                 pred_array = pred_joints.reshape(pred_joints.size(0), self.pred_len, 2)
                 pred_array = pred_array[0].numpy()  # Take first (and only) batch item
-                print(f"📊 FINAL TRAJECTORY:")
-                print(f"   pred_array shape: {pred_array.shape}")
-                print(f"   pred_array values:")
-                for i, pos in enumerate(pred_array):
-                    print(f"     Step {i}: x={pos[0]:.3f}, y={pos[1]:.3f}")
                 
                 trajectory = []
                 for i in range(pred_array.shape[0]):
@@ -902,35 +720,14 @@ class RealTimeTrajectoryPredictor:
                         'z': 0.0  # 2D prediction, z coordinate is not predicted
                     })
                 
-                print(f"✅ SUCCESS: Generated trajectory with {len(trajectory)} points")
-                print("=" * 60)
-                print("🎉 MODEL PREDICTION COMPLETE")
-                print("=" * 60)
-                
                 return trajectory
                 
         except Exception as e:
-            print("=" * 60)
-            print("❌ MODEL PREDICTION FAILED")
-            print("=" * 60)
             rospy.logwarn("Model prediction failed: {}".format(e))
             import traceback
-            print(f"❌ FULL TRACEBACK:")
-            print(traceback.format_exc())
-            print("=" * 60)
             return None
 
     def publish_predictions(self, predictions, timestamp):
-        """Publish trajectory predictions"""
-        print("=" * 60)
-        print("📢 PUBLISHING PREDICTIONS")
-        print("=" * 60)
-        print(f"📊 Publishing {len(predictions)} predictions at timestamp {timestamp.to_sec()}")
-        
-        for person_id, trajectory in predictions.items():
-            print(f"👤 Person {person_id}: {len(trajectory)} trajectory points")
-            for i, point in enumerate(trajectory):
-                print(f"   Step {i}: x={point['x']:.3f}, y={point['y']:.3f}, z={point['z']:.3f}")
         
         # Publish as PoseArray
         pose_array = PoseArray()
@@ -948,7 +745,6 @@ class RealTimeTrajectoryPredictor:
                 pose_array.poses.append(pose)
                 total_poses += 1
         
-        print(f"📢 POSE ARRAY: Publishing {total_poses} poses to /predicted_trajectories")
         self.trajectory_pub.publish(pose_array)
         
         # Publish as JSON
@@ -958,7 +754,6 @@ class RealTimeTrajectoryPredictor:
         }
         json_msg = String()
         json_msg.data = json.dumps(json_data)
-        print(f"📢 JSON: Publishing JSON data to /predicted_trajectories_json")
         self.trajectory_json_pub.publish(json_msg)
         
         # Publish as Path for each person
@@ -977,28 +772,21 @@ class RealTimeTrajectoryPredictor:
                 pose_stamped.pose.orientation.w = 1.0
                 path_msg.poses.append(pose_stamped)
             
-            print(f"📢 PATH: Publishing path with {len(path_msg.poses)} poses for person {person_id} to /predicted_paths")
             self.path_pub.publish(path_msg)
         
         # Create visualization markers
-        print(f"📢 MARKERS: Creating visualization markers...")
         self.publish_trajectory_visualization(predictions, timestamp)
-        
-        print(f"✅ PUBLISHING COMPLETE: Published predictions for {len(predictions)} people")
-        print("=" * 60)
         
         rospy.loginfo("Published predictions for {} people".format(len(predictions)))
 
     def publish_trajectory_visualization(self, predictions, timestamp):
         """Create and publish trajectory visualization markers"""
-        print("🎨 VISUALIZATION: Creating markers...")
         
         marker_array = MarkerArray()
         marker_id = 0
         total_markers = 0
         
         for person_id, trajectory in predictions.items():
-            print(f"🎨 Creating markers for person {person_id} with {len(trajectory)} points")
             
             # Create line strip for trajectory path
             trajectory_marker = Marker()
@@ -1025,7 +813,6 @@ class RealTimeTrajectoryPredictor:
             marker_array.markers.append(trajectory_marker)
             marker_id += 1
             total_markers += 1
-            print(f"   ✓ Line strip marker created (ID: {marker_id-1})")
             
             # Add spheres for each predicted position
             for i, pos in enumerate(trajectory):
@@ -1058,8 +845,6 @@ class RealTimeTrajectoryPredictor:
                 marker_id += 1
                 total_markers += 1
             
-            print(f"   ✓ {len(trajectory)} sphere markers created")
-            
             # Add text label for person ID
             text_marker = Marker()
             text_marker.header.frame_id = "map"  # Use map frame instead of odom
@@ -1088,7 +873,6 @@ class RealTimeTrajectoryPredictor:
                 marker_array.markers.append(text_marker)
                 marker_id += 1
                 total_markers += 1
-                print(f"   ✓ Text marker created")
             
             # Add ground plane projection (trajectory projected to z=0)
             ground_marker = Marker()
@@ -1115,11 +899,8 @@ class RealTimeTrajectoryPredictor:
             marker_array.markers.append(ground_marker)
             marker_id += 1
             total_markers += 1
-            print(f"   ✓ Ground projection marker created")
         
-        print(f"🎨 VISUALIZATION: Publishing {total_markers} markers to /trajectory_visualization")
         self.visualization_pub.publish(marker_array)
-        print(f"✅ VISUALIZATION: Markers published successfully")
 
     def run(self):
         """Main execution loop"""
@@ -1131,75 +912,6 @@ class RealTimeTrajectoryPredictor:
         rospy.loginfo("Script is event-driven - waiting for ROS messages...")
         rospy.loginfo("Topics subscribed: /tf (map->odom), /image_detections")
         
-        # Add a timer to periodically check if we're still alive and print diagnostic info
-        def diagnostic_timer(event):
-            print(f"📊 DIAGNOSTIC: Frame count: {self.data_processor.frame_count}")
-            print(f"📊 DIAGNOSTIC: Map->Odom poses collected: {len(self.data_processor.ego_poses)}")
-            print(f"📊 DIAGNOSTIC: Active persons: {len(self.data_processor.get_active_persons())}")
-            
-            # Check if topics exist and print all available topics
-            try:
-                topics = rospy.get_published_topics()
-                print(f"\n📋 ALL AVAILABLE TOPICS ({len(topics)} total):")
-                
-                image_detection_topics = []
-                person_related_topics = []
-                human_related_topics = []
-                
-                for topic_name, topic_type in topics:
-                    print(f"  - {topic_name} ({topic_type})")
-                    
-                    # Look for topics that might contain person/human/detection data
-                    if 'image_detections' in topic_name.lower():
-                        image_detection_topics.append((topic_name, topic_type))
-                    elif 'person' in topic_name.lower() or 'human' in topic_name.lower():
-                        person_related_topics.append((topic_name, topic_type))
-                    elif 'detection' in topic_name.lower() or 'track' in topic_name.lower():
-                        human_related_topics.append((topic_name, topic_type))
-                
-                print(f"\n🎯 PERSON/DETECTION RELATED TOPICS:")
-                if image_detection_topics:
-                    print(f"  Image Detection Topics:")
-                    for topic_name, topic_type in image_detection_topics:
-                        print(f"    ✓ {topic_name} ({topic_type})")
-                        
-                if person_related_topics:
-                    print(f"  Person/Human Topics:")
-                    for topic_name, topic_type in person_related_topics:
-                        print(f"    ✓ {topic_name} ({topic_type})")
-                        
-                if human_related_topics:
-                    print(f"  Detection/Tracking Topics:")
-                    for topic_name, topic_type in human_related_topics:
-                        print(f"    ✓ {topic_name} ({topic_type})")
-                
-                if not (image_detection_topics or person_related_topics or human_related_topics):
-                    print("  ❌ No person/detection related topics found!")
-                    print("  💡 Check rosbag contents with: rosbag info your_file.bag")
-                
-                tf_exists = any('/tf' in topic[0] for topic in topics)
-                detections_exists = any('/image_detections' in topic[0] for topic in topics)
-                print(f"\n📊 TARGET TOPICS STATUS:")
-                print(f"  /tf (map->odom): {'✓ FOUND' if tf_exists else '✗ MISSING'}")
-                print(f"  /image_detections: {'✓ FOUND' if detections_exists else '✗ MISSING'}")
-                
-                if not detections_exists:
-                    print("\n⚠️  WARNING: /image_detections topic not found!")
-                    print("   Check if rosbag contains PersonTracker messages")
-                    print("   or if the topic name is different")
-                    print("   Look at the person-related topics listed above ↑")
-                    
-            except Exception as e:
-                print(f"📊 DIAGNOSTIC: Could not check available topics: {e}")
-        
-        # Set up a 10-second diagnostic timer
-        rospy.Timer(rospy.Duration(10.0), diagnostic_timer)
-        
-        print("DEBUG: Starting rospy.spin() - waiting for messages...")
-        
-        # Just spin - all work is done in callbacks
-        rospy.spin()
-
 
 def main():
     try:
