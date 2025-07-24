@@ -7,6 +7,13 @@ This script contains all the functionality to:
 3. Organize the resulting JSON files into paired folders
 
 All functionality is contained within this single script - no external script calls needed.
+
+Usage:
+    python complete_pipeline.py --input /path/to/rosbag/files --output /path/to/output/directory
+    python complete_pipeline.py -i /path/to/rosbag/files -o /path/to/output/directory
+
+The input directory should contain 'invited' and 'wild' subdirectories with .bag files.
+The output directory will be created if it doesn't exist.
 """
 
 import os
@@ -14,6 +21,7 @@ import sys
 import glob
 import shutil
 import json
+import argparse
 from collections import defaultdict, OrderedDict
 from datetime import datetime
 
@@ -609,24 +617,40 @@ def extract_epfl_local_format(bag_file, output_file):
 
 def main():
     """Main pipeline function."""
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='Complete Pipeline Processing Script')
+    parser.add_argument('--input', '-i', required=True,
+                        help='Input directory containing rosbag files (should have "invited" and "wild" subdirectories)')
+    parser.add_argument('--output', '-o', required=True,
+                        help='Output directory where processed JSON files will be saved')
+    
+    args = parser.parse_args()
+    
+    # Validate input directory
+    if not os.path.exists(args.input):
+        log_message("ERROR: Input directory does not exist: {0}".format(args.input), "ERROR")
+        return False
+    
+    # Create output directory if it doesn't exist
+    ensure_directory_exists(args.output)
+    
     log_message("COMPLETE PIPELINE PROCESSING - STARTING", "INFO")
     log_message("="*60, "INFO")
+    log_message("Input directory: {0}".format(args.input), "INFO")
+    log_message("Output directory: {0}".format(args.output), "INFO")
     
     if not ROSBAG_AVAILABLE:
         log_message("ERROR: rosbag module not available. Please install ROS or rosbag package.", "ERROR")
         log_message("Installation: pip install rospkg rosbag", "INFO")
         return False
     
-    # Get base directory
-    base_dir = os.path.dirname(os.path.abspath(__file__))
+    # Define paths using command line arguments
+    rosbag_input_base = args.input
+    preprocessing_output_base = args.output
     
-    # Define paths
-    rosbag_output_base = os.path.join(base_dir, "rosbag_automation", "output")
-    preprocessing_dir = os.path.join(base_dir, "preprocessing_files")
-    
-    # Check if rosbag output directories exist
+    # Check if rosbag input directories exist
     for folder_type in ['invited', 'wild']:
-        input_folder = os.path.join(rosbag_output_base, folder_type)
+        input_folder = os.path.join(rosbag_input_base, folder_type)
         if not os.path.exists(input_folder):
             log_message("Input folder does not exist: {0}".format(input_folder), "WARNING")
     
@@ -638,8 +662,8 @@ def main():
         log_message("Processing {0} folder".format(folder_type.upper()), "INFO")
         log_message("="*50, "INFO")
         
-        input_folder = os.path.join(rosbag_output_base, folder_type)
-        output_folder = os.path.join(preprocessing_dir, folder_type)
+        input_folder = os.path.join(rosbag_input_base, folder_type)
+        output_folder = os.path.join(preprocessing_output_base, folder_type)
         
         # Skip if input folder doesn't exist
         if not os.path.exists(input_folder):
@@ -655,7 +679,7 @@ def main():
     
     # Organize JSON files into pairs
     log_message("Organizing JSON files into paired folders", "INFO")
-    organize_json_pairs(preprocessing_dir)
+    organize_json_pairs(preprocessing_output_base)
     
     # Final summary
     log_message("="*60, "INFO")
