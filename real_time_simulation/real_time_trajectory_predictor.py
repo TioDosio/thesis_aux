@@ -45,6 +45,9 @@ class RealTimeTrajectoryPredictor:
         self.obs_len = 4
         self.pred_len = 2
         
+        # Debug configuration
+        self.debug_coordinates = rospy.get_param('~debug_coordinates', False)
+        
         # Initialize data processor
         self.data_processor = RealTimeDataProcessor()
         
@@ -53,7 +56,7 @@ class RealTimeTrajectoryPredictor:
         self.latest_map_odom_timestamp = None
         self.latest_odom_base_frame = None
         self.latest_odom_base_timestamp = None
-        
+
         self.setup_model()
 
         # Initialize message manager for publishing
@@ -412,26 +415,43 @@ class RealTimeTrajectoryPredictor:
         # Get active persons from data processor
         active_persons = self.data_processor.get_active_persons()
         
-        for person_id in active_persons:
+        # Only process the first person in the array
+        if active_persons:
+            target_person_id = active_persons[0]  # Get the first person
             try:
                 # Generate model input using data processor
-                model_input = self.data_processor.generate_model_input(person_id)
+                model_input = self.data_processor.generate_model_input(target_person_id)
                 
                 if model_input is not None:
                     # Predict trajectory
                     trajectory = self.predict_single_trajectory(model_input)
                     
                     if trajectory is not None:
-                        predictions[person_id] = trajectory
+                        predictions[target_person_id] = trajectory
+                        rospy.logdebug("Trajectory predicted for first person {}".format(target_person_id))
             except Exception as e:
-                rospy.logwarn("Failed to predict trajectory for person {}: {}".format(person_id, e))
+                rospy.logwarn("Failed to predict trajectory for person {}: {}".format(target_person_id, e))
                 rospy.logdebug("   Traceback: {}".format(traceback.format_exc()))
+        else:
+            rospy.logdebug("No active persons found")
         
         if predictions:
-            self.publish_predictions(predictions, current_time)
+            # Get last known positions for orientation calculation
+            last_positions = self.data_processor.get_last_person_positions()
+            self.publish_predictions(predictions, current_time, last_positions)
 
     def predict_single_trajectory(self, model_input):
-        """Use the model to predict a single trajectory"""
+        """
+        Use the model to predict a single trajectory
+        
+        COORDINATE TRANSFORMATION PIPELINE:
+        1. Input keypoints are processed through joint2traj -> localization model -> loc2traj -> batch_process_coords
+        2. In batch_process_coords, coordinates are normalized relative to the last observation frame position
+        3. Trajectory model predicts relative movements from this normalized position
+        4. We need to reverse these transformations:
+           a. Add back the last observation position (from loc model output)
+           b. Transform from ego/camera frame to world coordinates using ego pose
+        """
         try:
             with torch.no_grad():
                 # Prepare input data for the localization model
@@ -445,6 +465,7 @@ class RealTimeTrajectoryPredictor:
                         # Take only x,y coordinates (first 2 features), drop confidence
                         inputs = inputs[:, :, :2, :].permute(0, 1, 3, 2)  # [batch, seq, 17, 2]
                     else:
+                        rospy.logwarn("Unexpected keypoint tensor shape: {}".format(inputs.shape))
                         return None
                 elif len(inputs.shape) == 3:
                     batch_size, seq_length, features = inputs.shape
@@ -454,8 +475,10 @@ class RealTimeTrajectoryPredictor:
                         inputs_reshaped = inputs.view(batch_size, seq_length, 17, 3)
                         inputs = inputs_reshaped[:, :, :, :2]  # Take only x,y, drop confidence
                     else:
+                        rospy.logwarn("Unexpected feature count: {}".format(features))
                         return None
                 else:
+                    rospy.logwarn("Unexpected input tensor dimensions: {}".format(inputs.shape))
                     return None
                 
                 # Create scene representation from keypoints
@@ -520,8 +543,18 @@ class RealTimeTrajectoryPredictor:
                 pred_joints = pred_joints[:, -self.pred_len:]
                 pred_joints = pred_joints.cpu()
                 
-                # Add relative position to last observation
-                last_obs_pos = scene_train_real_ped_traj[:,0:1,(self.obs_len-1):self.obs_len, 0, 0:2]
+                # IMPORTANT: Apply proper inverse transformations to get world coordinates
+                
+                # 1. Add relative position to last observation (this makes it relative to world coordinates)
+                try:
+                    last_obs_pos = scene_train_real_ped_traj[:,0:1,(self.obs_len-1):self.obs_len, 0, 0:2]
+                    rospy.logdebug("Last obs position tensor shape: {}".format(last_obs_pos.shape))
+                    rospy.logdebug("Scene train real ped traj shape: {}".format(scene_train_real_ped_traj.shape))
+                except Exception as e:
+                    rospy.logwarn("Error extracting last obs position: {}".format(e))
+                    rospy.logwarn("scene_train_real_ped_traj shape: {}".format(scene_train_real_ped_traj.shape))
+                    # Create a simple fallback - assume current position is at origin
+                    last_obs_pos = torch.zeros(1, 1, 1, 1, 2)
                 
                 pred_joints = pred_joints + last_obs_pos
                 
@@ -529,23 +562,108 @@ class RealTimeTrajectoryPredictor:
                 pred_array = pred_joints.reshape(pred_joints.size(0), self.pred_len, 2)
                 pred_array = pred_array[0].numpy()  # Take first (and only) batch item
                 
+                # 2. Transform from ego frame to world frame (simplified approach)
+                # If the full coordinate transformation fails, we'll use a simpler approach
+                try:
+                    # Get the ego pose for the last observation frame
+                    ego_pose_tensor = model_input['ego_pose']  # [batch, seq_len, 7] where 7 = [q1,q2,q3,q4,x,y,z]
+                    last_ego_pose = ego_pose_tensor[0, self.obs_len-1].numpy()  # Take last observation frame
+                    
+                    # Extract ego position and rotation
+                    ego_quat = last_ego_pose[:4]  # [q1, q2, q3, q4] = [x, y, z, w] quaternion format
+                    ego_pos = last_ego_pose[4:]   # [x, y, z] position
+                    
+                    # Convert quaternion to rotation matrix for 2D transformation
+                    ego_q = Quaternion(ego_quat[3], ego_quat[0], ego_quat[1], ego_quat[2])  # w, x, y, z
+                    yaw = ego_q.yaw_pitch_roll[0]  # Get yaw angle
+                    
+                    # Apply 2D rotation and translation
+                    cos_yaw = np.cos(yaw)
+                    sin_yaw = np.sin(yaw)
+                    
+                    rospy.logdebug("Using full coordinate transformation")
+                    rospy.logdebug("  Ego position: ({:.3f}, {:.3f}, {:.3f})".format(ego_pos[0], ego_pos[1], ego_pos[2]))
+                    rospy.logdebug("  Ego yaw: {:.3f} rad ({:.1f} deg)".format(yaw, np.degrees(yaw)))
+                    
+                    # Apply coordinate transformation
+                    world_coordinates = True
+                    
+                except Exception as transform_error:
+                    rospy.logwarn("Coordinate transformation failed: {}. Using simplified approach.".format(transform_error))
+                    cos_yaw = 1.0
+                    sin_yaw = 0.0
+                    ego_pos = np.array([0.0, 0.0, 0.0])
+                    world_coordinates = False
+                
+                # Debug logging with proper tensor indexing
+                if self.debug_coordinates:
+                    rospy.loginfo("=== COORDINATE TRANSFORMATION DEBUG ===")
+                    
+                    try:
+                        # Try to get last observation position for debugging (only if extraction succeeded)
+                        if 'last_obs_pos' in locals() and len(last_obs_pos.shape) >= 4:
+                            if len(last_obs_pos.shape) == 5:
+                                last_obs_x = last_obs_pos[0, 0, 0, 0, 0].item()
+                                last_obs_y = last_obs_pos[0, 0, 0, 0, 1].item()
+                            else:  # 4 dimensions
+                                last_obs_x = last_obs_pos[0, 0, 0, 0].item()
+                                last_obs_y = last_obs_pos[0, 0, 0, 1].item()
+                            rospy.loginfo("Last obs position: ({:.3f}, {:.3f})".format(last_obs_x, last_obs_y))
+                        
+                        if world_coordinates:
+                            rospy.loginfo("Ego position: ({:.3f}, {:.3f}, {:.3f})".format(ego_pos[0], ego_pos[1], ego_pos[2]))
+                            rospy.loginfo("Ego yaw: {:.3f} rad ({:.1f} deg)".format(yaw, np.degrees(yaw)))
+                        else:
+                            rospy.loginfo("Using simplified coordinate system (no ego transformation)")
+                            
+                    except Exception as debug_error:
+                        rospy.loginfo("Debug logging failed: {}".format(debug_error))
+                
                 trajectory = []
                 for i in range(pred_array.shape[0]):
+                    # Apply rotation matrix (2D rotation around Z-axis)
+                    x_local = pred_array[i, 0]
+                    y_local = pred_array[i, 1]
+                    
+                    if self.debug_coordinates:
+                        rospy.loginfo("Pred step {}: local ({:.3f}, {:.3f})".format(i, x_local, y_local))
+                    
+                    # Transform from ego frame to world frame
+                    if world_coordinates:
+                        x_world = cos_yaw * x_local - sin_yaw * y_local + ego_pos[0]
+                        y_world = sin_yaw * x_local + cos_yaw * y_local + ego_pos[1]
+                    else:
+                        # Simplified - use local coordinates directly
+                        x_world = x_local
+                        y_world = y_local
+                    
+                    if self.debug_coordinates:
+                        rospy.loginfo("Pred step {}: world ({:.3f}, {:.3f})".format(i, x_world, y_world))
+                    
                     trajectory.append({
-                        'x': float(pred_array[i, 0]),
-                        'y': float(pred_array[i, 1]),
+                        'x': float(x_world),
+                        'y': float(y_world),
                         'z': 0.0  # 2D prediction, z coordinate is not predicted
                     })
                 
                 return trajectory
                 
+        except IndexError as e:
+            rospy.logwarn("Tensor indexing error in prediction: {}".format(e))
+            rospy.logwarn("Available model_input keys: {}".format(list(model_input.keys())))
+            if 'kps' in model_input:
+                rospy.logwarn("KPS tensor shape: {}".format(model_input['kps'].shape))
+            if 'ego_pose' in model_input:
+                rospy.logwarn("Ego pose tensor shape: {}".format(model_input['ego_pose'].shape))
+            return None
         except Exception as e:
             rospy.logwarn("Model prediction failed: {}".format(e))
+            rospy.logdebug("Full traceback: {}".format(traceback.format_exc()))
             return None
 
-    def publish_predictions(self, predictions, timestamp):
+    def publish_predictions(self, predictions, timestamp, last_person_positions=None):
         """Publish predictions using the message manager"""
-        self.message_manager.publish_all_predictions(predictions, timestamp)
+        self.message_manager.publish_all_predictions(predictions, timestamp, last_person_positions)
 
     def run(self):
         # Keep the node alive to process incoming messages

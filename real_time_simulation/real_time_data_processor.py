@@ -444,6 +444,20 @@ class RealTimeDataProcessor:
         """Get list of persons that can generate sequences"""
         return [person_id for person_id in self.person_data.keys() 
                 if self.can_generate_sequence(person_id)]
+    
+    def get_last_person_positions(self):
+        """Get the last known positions for all active persons"""
+        last_positions = {}
+        for person_id in self.person_data.keys():
+            if self.person_data[person_id]:
+                # Get the most recent position for this person
+                last_data = self.person_data[person_id][-1]
+                last_positions[person_id] = {
+                    'x': last_data['x'],
+                    'y': last_data['y'], 
+                    'z': last_data['z']
+                }
+        return last_positions
 
 
 # Utility functions for message processing

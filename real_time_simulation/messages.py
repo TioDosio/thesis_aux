@@ -5,9 +5,10 @@ Handles all ROS message creation, publishing, and visualization functions.
 """
 
 import json
+import math
 import rospy
 from std_msgs.msg import String
-from geometry_msgs.msg import PoseArray, Pose, Point, PoseStamped
+from geometry_msgs.msg import PoseArray, Pose, Point, PoseStamped, Quaternion
 from nav_msgs.msg import Path
 from visualization_msgs.msg import Marker, MarkerArray
 
@@ -22,38 +23,79 @@ class TrajectoryMessageManager:
         self.visualization_pub = rospy.Publisher('/trajectory_visualization', MarkerArray, queue_size=10)
         self.path_pub = rospy.Publisher('/predicted_paths', Path, queue_size=10)
     
-    def publish_all_predictions(self, predictions, timestamp):
+    def publish_all_predictions(self, predictions, timestamp, last_person_positions=None):
         """
         Main function to publish predictions in all formats
         
         Args:
             predictions: Dictionary of person_id -> trajectory predictions
             timestamp: ROS timestamp for the predictions
+            last_person_positions: Dictionary of person_id -> last known position {'x': x, 'y': y, 'z': z}
         """
         if not predictions:
             return
             
         # Publish in multiple formats
-        self.publish_pose_array(predictions, timestamp)
+        self.publish_pose_array(predictions, timestamp, last_person_positions)
         self.publish_json_format(predictions, timestamp)
-        self.publish_path_messages(predictions, timestamp)
+        self.publish_path_messages(predictions, timestamp, last_person_positions)
         self.publish_visualization_markers(predictions, timestamp)
         
         rospy.loginfo("Published predictions for {} people".format(len(predictions)))
     
-    def publish_pose_array(self, predictions, timestamp):
-        """Publish predictions as PoseArray message"""
+    def publish_pose_array(self, predictions, timestamp, last_person_positions=None):
+        """
+        Publish predictions as PoseArray message with proper orientations
+        
+        Args:
+            predictions: Dictionary of person_id -> trajectory predictions
+            timestamp: ROS timestamp
+            last_person_positions: Dictionary of person_id -> last known position
+        """
         pose_array = PoseArray()
         pose_array.header.stamp = timestamp
         pose_array.header.frame_id = "map"
         
         for person_id, trajectory in predictions.items():
+            # Get the reference position (last known position or first trajectory point)
+            if last_person_positions and person_id in last_person_positions:
+                ref_pos = last_person_positions[person_id]
+            elif trajectory:
+                # If no last position, use the first trajectory point as reference
+                # This assumes the trajectory starts from current position
+                ref_pos = trajectory[0]
+            else:
+                continue
+            
+            # Create poses for each trajectory point
             for step, pos in enumerate(trajectory):
                 pose = Pose()
                 pose.position.x = pos['x']
                 pose.position.y = pos['y']
                 pose.position.z = pos['z']
-                pose.orientation.w = 1.0
+                
+                # Calculate orientation based on movement direction
+                if step == 0:
+                    # First prediction point: direction from last known position to first prediction
+                    dx = pos['x'] - ref_pos['x']
+                    dy = pos['y'] - ref_pos['y']
+                else:
+                    # Subsequent points: direction from previous trajectory point
+                    prev_pos = trajectory[step - 1]
+                    dx = pos['x'] - prev_pos['x']
+                    dy = pos['y'] - prev_pos['y']
+                
+                # Calculate yaw angle (rotation around z-axis)
+                # Add small threshold to avoid issues with zero movement
+                if abs(dx) < 1e-6 and abs(dy) < 1e-6:
+                    # No movement, use default orientation (facing forward)
+                    yaw = 0.0
+                else:
+                    yaw = math.atan2(dy, dx)
+                
+                # Convert yaw to quaternion (only rotation around z-axis)
+                pose.orientation = self._yaw_to_quaternion(yaw)
+                
                 pose_array.poses.append(pose)
         
         self.trajectory_pub.publish(pose_array)
@@ -68,12 +110,20 @@ class TrajectoryMessageManager:
         json_msg.data = json.dumps(json_data)
         self.trajectory_json_pub.publish(json_msg)
     
-    def publish_path_messages(self, predictions, timestamp):
-        """Publish Path messages for each person"""
+    def publish_path_messages(self, predictions, timestamp, last_person_positions=None):
+        """Publish Path messages for each person with proper orientations"""
         for person_id, trajectory in predictions.items():
             path_msg = Path()
             path_msg.header.stamp = timestamp
             path_msg.header.frame_id = "map"
+            
+            # Get reference position for orientation calculation
+            if last_person_positions and person_id in last_person_positions:
+                ref_pos = last_person_positions[person_id]
+            elif trajectory:
+                ref_pos = trajectory[0]
+            else:
+                continue
             
             for step, pos in enumerate(trajectory):
                 pose_stamped = PoseStamped()
@@ -82,13 +132,40 @@ class TrajectoryMessageManager:
                 pose_stamped.pose.position.x = pos['x']
                 pose_stamped.pose.position.y = pos['y']
                 pose_stamped.pose.position.z = pos['z'] if pos['z'] != 0.0 else 0.02
-                pose_stamped.pose.orientation.w = 1.0
+                
+                # Calculate orientation based on movement direction
+                if step == 0:
+                    # First prediction point: direction from last known position to first prediction
+                    dx = pos['x'] - ref_pos['x']
+                    dy = pos['y'] - ref_pos['y']
+                else:
+                    # Subsequent points: direction from previous trajectory point
+                    prev_pos = trajectory[step - 1]
+                    dx = pos['x'] - prev_pos['x']
+                    dy = pos['y'] - prev_pos['y']
+                
+                # Calculate yaw angle and convert to quaternion
+                # Add small threshold to avoid issues with zero movement
+                if abs(dx) < 1e-6 and abs(dy) < 1e-6:
+                    # No movement, use default orientation (facing forward)
+                    yaw = 0.0
+                else:
+                    yaw = math.atan2(dy, dx)
+                
+                pose_stamped.pose.orientation = self._yaw_to_quaternion(yaw)
+                
                 path_msg.poses.append(pose_stamped)
             
             self.path_pub.publish(path_msg)
     
     def publish_visualization_markers(self, predictions, timestamp):
-        """Create and publish comprehensive RViz visualization markers"""
+        """
+        Create and publish comprehensive RViz visualization markers
+        
+        The predictions should already be in world coordinates (map frame) after proper
+        inverse transformation from the model output. These markers will visualize
+        the trajectory at the correct world positions.
+        """
         marker_array = MarkerArray()
         marker_id = 0
         
@@ -226,6 +303,25 @@ class TrajectoryMessageManager:
         
         marker_array.markers.append(ground_marker)
         return marker_id + 1
+    
+    def _yaw_to_quaternion(self, yaw):
+        """
+        Convert yaw angle (rotation around z-axis) to quaternion
+        
+        Args:
+            yaw: Yaw angle in radians
+            
+        Returns:
+            geometry_msgs/Quaternion
+        """
+        # For rotation around z-axis only: q = [0, 0, sin(yaw/2), cos(yaw/2)]
+        half_yaw = yaw * 0.5
+        quat = Quaternion()
+        quat.x = 0.0
+        quat.y = 0.0
+        quat.z = math.sin(half_yaw)
+        quat.w = math.cos(half_yaw)
+        return quat
 
 
 # Utility functions for message creation
